@@ -214,3 +214,8 @@ variable "vpc_name" {
   description = "The name of the VPC the infrastructure will be deployed to."
   type        = string
 }
+
+variable "jenkins_username" {
+  description = "Special username to connect the agents"
+  type = string
+}

@@ -433,10 +433,11 @@ data "template_file" "agent_write_files" {
   template = file("${path.module}/init/agent-write-files.cfg")
 
   vars = {
-    agent_logs    = aws_cloudwatch_log_group.agent_logs.name
-    aws_region    = var.region
-    executors     = var.executors
-    swarm_version = var.swarm_version
+    agent_logs        = aws_cloudwatch_log_group.agent_logs.name
+    aws_region        = var.region
+    executors         = var.executors
+    swarm_version     = var.swarm_version
+    jenkins_username  = var.jenkins_username
   }
 }
 
