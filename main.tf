@@ -741,7 +741,7 @@ data "template_file" "master_write_files" {
     aws_region               = var.region
     executors_min            = var.agent_min * var.executors
     master_logs              = aws_cloudwatch_log_group.master_logs.name
-    jenkins_username  = var.jenkins_username
+    #jenkins_username  = var.jenkins_username
 
   }
 }
@@ -754,7 +754,7 @@ data "template_file" "master_runcmd" {
     aws_region      = var.region
     jenkins_version = var.jenkins_version
     master_storage  = aws_efs_file_system.master_efs.id
-    jenkins_username  = var.jenkins_username
+    #jenkins_username  = var.jenkins_username
 
   }
 }
