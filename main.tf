@@ -199,6 +199,10 @@ resource "aws_autoscaling_group" "agent_asg" {
   vpc_zone_identifier = data.aws_subnet_ids.private.ids
 
   mixed_instances_policy {
+    
+    instances_distribution {
+      on_demand_percentage_above_base_capacity = 100
+    }
 
     launch_template {
       launch_template_specification {
@@ -206,11 +210,8 @@ resource "aws_autoscaling_group" "agent_asg" {
         version            = var.agent_lt_version
       }
 
-      dynamic "override" {
-        for_each = var.instance_type
-        content {
-          instance_type = override.value
-        }
+     override {
+        instance_type = var.instance_type[0]
       }
 
     }
