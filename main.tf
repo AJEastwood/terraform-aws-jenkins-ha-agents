@@ -249,7 +249,7 @@ resource "aws_launch_template" "agent_lt" {
       volume_size           = var.agent_volume_size
       encrypted             = true
       delete_on_termination = true
-      volume_type           = "gp2"
+      volume_type           = "gp3"
     }
   }
 
@@ -533,7 +533,7 @@ resource "aws_launch_template" "master_lt" {
       volume_size           = 25
       encrypted             = true
       delete_on_termination = true
-      volume_type           = "gp2"
+      volume_type           = "gp3"
     }
   }
 
