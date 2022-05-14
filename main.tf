@@ -203,7 +203,7 @@ resource "aws_autoscaling_group" "agent_asg" {
     instances_distribution {
       on_demand_base_capacity                  = (var.enable_spot_insances==1)?0:100
       on_demand_percentage_above_base_capacity = (var.enable_spot_insances==1)?0:100
-      spot_instance_pools                      = (var.enable_spot_insances==1)?lenght(var.instance_type):0
+      spot_instance_pools                      = (var.enable_spot_insances==1)?length(var.instance_type):0
     }
 
     launch_template {
