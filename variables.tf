@@ -130,7 +130,7 @@ variable "instance_type" {
 variable "jenkins_version" {
   description = "The version number of Jenkins to use on the master. Change this value when a new version comes out, and it will update the launch configuration and the autoscaling group."
   type        = string
-  default     = "2.303.2"
+  default     = "2.332.3"
 }
 
 variable "key_name" {
@@ -202,7 +202,7 @@ variable "ssm_parameter" {
 variable "swarm_version" {
   description = "The version of swarm plugin to install on the agents. Update by updating this value."
   type        = string
-  default     = "3.28"
+  default     = "3.32"
 }
 
 variable "tags" {
@@ -216,6 +216,12 @@ variable "vpc_name" {
 }
 
 variable "jenkins_username" {
-  description = "Special username to connect the agents"
+  description = "Special username to connect the agents. Useful when you want to use Azure AD authentication, then you need to pass an username that exisits in the AD, otherwise agents wont be able to connect to amster when you switch over to Azure AD auth with configuration as code plugin"
   type = string
+}
+
+variable "enable_spot_insances" {
+  description = "1 if it is enabled, 0 to disable spot insance pools. Useful to disable if jenkins used to deploy infrastructure resources with terraform preventing broken terraform state when spot instance removed from the agent pool"
+  type = number
+  default = 1
 }

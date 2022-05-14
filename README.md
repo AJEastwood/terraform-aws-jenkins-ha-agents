@@ -173,59 +173,136 @@ runcmd:
 - [Full Jenkins-HA-Agents Example](https://github.com/neiman-marcus/terraform-aws-jenkins-ha-agents/tree/master/examples/full)
 - [Minimum Jenkins-HA-Agents Example](https://github.com/neiman-marcus/terraform-aws-jenkins-ha-agents/tree/master/examples/minimum)
 
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 2.25 |
+| <a name="requirement_template"></a> [template](#requirement\_template) | >= 2.1 |
+
+## Providers
+
+| Name | Version |
+|------|---------|
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 4.14.0 |
+| <a name="provider_template"></a> [template](#provider\_template) | 2.2.0 |
+
+## Modules
+
+No modules.
+
+## Resources
+
+| Name | Type |
+|------|------|
+| [aws_autoscaling_group.agent_asg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
+| [aws_autoscaling_group.master_asg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_group) | resource |
+| [aws_autoscaling_policy.agent_scale_down_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_policy) | resource |
+| [aws_autoscaling_policy.agent_scale_up_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/autoscaling_policy) | resource |
+| [aws_cloudwatch_log_group.agent_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_cloudwatch_log_group.master_logs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_log_group) | resource |
+| [aws_cloudwatch_metric_alarm.agent_cpu_alarm](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.available_executors_low](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_cloudwatch_metric_alarm.idle_executors_high](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_metric_alarm) | resource |
+| [aws_efs_file_system.master_efs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_file_system) | resource |
+| [aws_efs_mount_target.mount_targets](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/efs_mount_target) | resource |
+| [aws_iam_instance_profile.agent_ip](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
+| [aws_iam_instance_profile.master_ip](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_instance_profile) | resource |
+| [aws_iam_role.agent_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.master_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role_policy.agent_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.master_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy_attachment.agent_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.master_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_launch_template.agent_lt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
+| [aws_launch_template.master_lt](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/launch_template) | resource |
+| [aws_lb.lb](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb) | resource |
+| [aws_lb_listener.master_http_listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
+| [aws_lb_listener.master_lb_listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_listener) | resource |
+| [aws_lb_target_group.master_tg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group) | resource |
+| [aws_route53_record.r53_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) | resource |
+| [aws_security_group.agent_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group.lb_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group.master_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_security_group.master_storage_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/security_group) | resource |
+| [aws_ssm_parameter.admin_password](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
+| [aws_acm_certificate.certificate](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/acm_certificate) | data source |
+| [aws_ami.amzn2_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
+| [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
+| [aws_iam_policy.ssm_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
+| [aws_route53_zone.r53_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
+| [aws_security_group.bastion_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group) | data source |
+| [aws_subnet_ids.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet_ids) | data source |
+| [aws_subnet_ids.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnet_ids) | data source |
+| [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
+| [template_cloudinit_config.agent_init](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/cloudinit_config) | data source |
+| [template_cloudinit_config.master_init](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/cloudinit_config) | data source |
+| [template_file.agent_end](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+| [template_file.agent_runcmd](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+| [template_file.agent_write_files](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+| [template_file.master_end](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+| [template_file.master_runcmd](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+| [template_file.master_write_files](https://registry.terraform.io/providers/hashicorp/template/latest/docs/data-sources/file) | data source |
+
 ## Inputs
 
-| Name                        | Description                                                                                                                                                                |  Type  |                   Default                    | Required |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----: | :------------------------------------------: | :------: |
-| admin_password              | The master admin password. Used to bootstrap and login to the master. Also pushed to ssm parameter store for posterity.                                                    | string |                    `N/A`                     |   yes    |
-| agent_lt_version            | The version of the agent launch template to use. Only use if you need to programatically select an older version of the launch template. Not recommended to change.        | string |                  `$Latest`                   |    no    |
-| agent_max                   | The maximum number of agents to run in the agent ASG.                                                                                                                      |  int   |                     `6`                      |    no    |
-| agent_min                   | The minimum number of agents to run in the agent ASG.                                                                                                                      |  int   |                     `2`                      |    no    |
-| agent_volume_size           | The size of the agent volume.                                                                                                                                              |  int   |                     `16`                     |    no    |
-| ami_name                    | The name of the amzn2 ami. Used for searching for AMI id.                                                                                                                  | string |       `amzn2-ami-hvm-2.0.*-x86_64-gp2`       |    no    |
-| ami_owner                   | The owner of the amzn2 ami.                                                                                                                                                | string |                   `amazon`                   |    no    |
-| api_ssm_parameter           | The path value of the API key, stored in ssm parameter store.                                                                                                              | string |                  `/api_key`                  |    no    |
-| application                 | The application name, to be interpolated into many resources and tags. Unique to this project.                                                                             | string |                  `jenkins`                   |    no    |
-| auto_update_plugins_cron    | Cron to set to auto update plugins. The default is set to February 31st, disabling this functionality. Overwrite this variable to have plugins auto update.                | string |                 `0 0 31 2 *`                 |    no    |
-| bastion_sg_name             | The bastion security group name to allow to ssh to the master/agents.                                                                                                      | string |                    `N/A`                     |   yes    |
-| cidr_ingress                | IP address cidr ranges allowed access to the LB.                                                                                                                           | string |               `["0.0.0.0/0"]`                |    no    |
-| custom_plugins              | Custom plugins to install when bootstrapping. Created from a template outside of the module.                                                                               | string |                   `empty`                    |    no    |
-| domain_name                 | The root domain name used to lookup the route53 zone information.                                                                                                          | string |                    `N/A`                     |   yes    |
-| efs_mode                    | The EFS throughput mode. Options are bursting and provisioned. To set the provisioned throughput in mibps, configure `efs_provisioned_throughput` variable.                | string |                  `bursting`                  |    no    |
-| efs_provisioned_throughput  | The EFS provisioned throughput in mibps. Ignored if EFS throughput mode is set to bursting.                                                                                |  int   |                     `3`                      |    no    |
-| executors                   | The number of executors to assign to each agent. Must be an even number, divisible by two.                                                                                 |  int   |                     `4`                      |    no    |
-| extra_agent_userdata        | Extra agent user-data to add to the default built-in. Created from a template outside of the module.                                                                       | string |                   `empty`                    |    no    |
-| extra_agent_userdata_merge  | Control how cloud-init merges custom agent user-data sections.                                                                                                             | string | `list(append) + dict(recurse_array) + str()` |    no    |
-| extra_master_userdata       | Extra master user-data to add to the default built-in. Created from a template outside of the module.                                                                      | string |                   `empty`                    |    no    |
-| extra_master_userdata_merge | Control how cloud-init merges custom master user-data sections.                                                                                                            | string | `list(append) + dict(recurse_array) + str()` |    no    |
-| instance_type               | The type of instances to use for both ASG's. The first value in the list will be set as the master instance.                                                               |  list  |      `t3a.xlarge, t3.xlarge, t2.xlarge`      |    no    |
-| jenkins_version             | The version number of Jenkins to use on the master. Change this value when a new version comes out, and it will update the launch configuration and the autoscaling group. | string |                  `2.249.1`                   |    no    |
-| key_name                    | SSH Key to launch instances.                                                                                                                                               | string |                    `null`                    |    no    |
-| master_lt_version           | The version of the master launch template to use. Only use if you need to programatically select an older version of the launch template. Not recommended to change.       | string |                  `$Latest`                   |    no    |
-| password_ssm_parameter      | The path value of the master admin passowrd, stored in ssm parameter store.                                                                                                | string |              `/admin_password`               |    no    |
-| private_subnet_name         | The name prefix of the private subnets to pull in as a data source.                                                                                                        | string |                    `N/A`                     |   yes    |
-| public_subnet_name          | The name prefix of the public subnets to pull in as a data source.                                                                                                         | string |                    `N/A`                     |   yes    |
-| r53_record                  | The FQDN for the route 53 record.                                                                                                                                          | string |                    `N/A`                     |   yes    |
-| region                      | The AWS region to deploy the infrastructure too.                                                                                                                           | string |                    `N/A`                     |   yes    |
-| retention_in_days           | How many days to retain cloudwatch logs.                                                                                                                                   |  int   |                     `90`                     |    no    |
-| scale_down_number           | Number of agents to destroy when scaling down.                                                                                                                             |  int   |                     `-1`                     |    no    |
-| scale_up_number             | Number of agents to create when scaling up.                                                                                                                                |  int   |                     `1`                      |    no    |
-| ssl_certificate             | The name of the SSL certificate to use on the load balancer.                                                                                                               | string |                    `N/A`                     |   yes    |
-| ssm_parameter               | The full ssm parameter path that will house the api key and master admin password. Also used to grant IAM access to this resource.                                         | string |                    `N/A`                     |   yes    |
-| swarm_version               | The version of swarm plugin to install on the agents. Update by updating this value.                                                                                       |  int   |                    `3.23`                    |    no    |
-| tags                        | tags to define locally, and interpolate into the tags in this module.                                                                                                      | string |                    `N/A`                     |   yes    |
-| vpc_name                    | The name of the VPC the infrastructure will be deployed to.                                                                                                                | string |                    `N/A`                     |   yes    |
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_admin_password"></a> [admin\_password](#input\_admin\_password) | The master admin password. Used to bootstrap and login to the master. Also pushed to ssm parameter store for posterity. | `string` | n/a | yes |
+| <a name="input_agent_lt_version"></a> [agent\_lt\_version](#input\_agent\_lt\_version) | The version of the agent launch template to use. Only use if you need to programatically select an older version of the launch template. Not recommended to change. | `string` | `"$Latest"` | no |
+| <a name="input_agent_max"></a> [agent\_max](#input\_agent\_max) | The maximum number of agents to run in the agent ASG. | `number` | `6` | no |
+| <a name="input_agent_min"></a> [agent\_min](#input\_agent\_min) | The minimum number of agents to run in the agent ASG. | `number` | `2` | no |
+| <a name="input_agent_volume_size"></a> [agent\_volume\_size](#input\_agent\_volume\_size) | The size of the agent volume. | `number` | `16` | no |
+| <a name="input_ami_name"></a> [ami\_name](#input\_ami\_name) | The name of the amzn2 ami. Used for searching for AMI id. | `string` | `"amzn2-ami-hvm-2.0.*-x86_64-gp2"` | no |
+| <a name="input_ami_owner"></a> [ami\_owner](#input\_ami\_owner) | The owner of the amzn2 ami. | `string` | `"amazon"` | no |
+| <a name="input_api_ssm_parameter"></a> [api\_ssm\_parameter](#input\_api\_ssm\_parameter) | The path value of the API key, stored in ssm parameter store. | `string` | `"/api_key"` | no |
+| <a name="input_application"></a> [application](#input\_application) | The application name, to be interpolated into many resources and tags. Unique to this project. | `string` | `"jenkins"` | no |
+| <a name="input_auto_update_plugins_cron"></a> [auto\_update\_plugins\_cron](#input\_auto\_update\_plugins\_cron) | Cron to set to auto update plugins. The default is set to February 31st, disabling this functionality. Overwrite this variable to have plugins auto update. | `string` | `"0 0 31 2 *"` | no |
+| <a name="input_bastion_sg_name"></a> [bastion\_sg\_name](#input\_bastion\_sg\_name) | The bastion security group name to allow to ssh to the master/agents. | `string` | n/a | yes |
+| <a name="input_cidr_ingress"></a> [cidr\_ingress](#input\_cidr\_ingress) | IP address cidr ranges allowed access to the LB. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| <a name="input_custom_plugins"></a> [custom\_plugins](#input\_custom\_plugins) | Custom plugins to install alongside the defaults. Pull from outside the module. | `string` | `""` | no |
+| <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The root domain name used to lookup the route53 zone information. | `string` | n/a | yes |
+| <a name="input_efs_mode"></a> [efs\_mode](#input\_efs\_mode) | The EFS throughput mode. Options are bursting and provisioned. To set the provisioned throughput in mibps, configure efs\_provisioned\_throughput variable. | `string` | `"bursting"` | no |
+| <a name="input_efs_provisioned_throughput"></a> [efs\_provisioned\_throughput](#input\_efs\_provisioned\_throughput) | The EFS provisioned throughput in mibps. Ignored if EFS throughput mode is set to bursting. | `number` | `3` | no |
+| <a name="input_enable_spot_insances"></a> [enable\_spot\_insances](#input\_enable\_spot\_insances) | 1 if it is enabled, 0 to disable spot insance pools. Useful to disable if jenkins used to deploy infrastructure resources with terraform preventing broken terraform state when spot instance removed from the agent pool | `number` | `1` | no |
+| <a name="input_executors"></a> [executors](#input\_executors) | The number of executors to assign to each agent. Must be an even number, divisible by two. | `number` | `4` | no |
+| <a name="input_extra_agent_userdata"></a> [extra\_agent\_userdata](#input\_extra\_agent\_userdata) | Extra agent user-data to add to the default built-in. | `string` | `""` | no |
+| <a name="input_extra_agent_userdata_merge"></a> [extra\_agent\_userdata\_merge](#input\_extra\_agent\_userdata\_merge) | Control how cloud-init merges extra agent user-data sections. | `string` | `"list(append)+dict(recurse_array)+str()"` | no |
+| <a name="input_extra_master_userdata"></a> [extra\_master\_userdata](#input\_extra\_master\_userdata) | Extra master user-data to add to the default built-in. | `string` | `""` | no |
+| <a name="input_extra_master_userdata_merge"></a> [extra\_master\_userdata\_merge](#input\_extra\_master\_userdata\_merge) | Control how cloud-init merges extra master user-data sections. | `string` | `"list(append)+dict(recurse_array)+str()"` | no |
+| <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The type of instances to use for both ASG's. The first value in the list will be set as the master instance. | `list(string)` | <pre>[<br>  "t3a.xlarge",<br>  "t3.xlarge",<br>  "t2.xlarge"<br>]</pre> | no |
+| <a name="input_jenkins_username"></a> [jenkins\_username](#input\_jenkins\_username) | Special username to connect the agents. Useful when you want to use Azure AD authentication, then you need to pass an username that exisits in the AD, otherwise agents wont be able to connect to amster when you switch over to Azure AD auth with configuration as code plugin | `string` | n/a | yes |
+| <a name="input_jenkins_version"></a> [jenkins\_version](#input\_jenkins\_version) | The version number of Jenkins to use on the master. Change this value when a new version comes out, and it will update the launch configuration and the autoscaling group. | `string` | `"2.332.3"` | no |
+| <a name="input_key_name"></a> [key\_name](#input\_key\_name) | SSH Key to launch instances. | `string` | `null` | no |
+| <a name="input_master_lt_version"></a> [master\_lt\_version](#input\_master\_lt\_version) | The version of the master launch template to use. Only use if you need to programatically select an older version of the launch template. Not recommended to change. | `string` | `"$Latest"` | no |
+| <a name="input_password_ssm_parameter"></a> [password\_ssm\_parameter](#input\_password\_ssm\_parameter) | The path value of the master admin passowrd, stored in ssm parameter store. | `string` | `"/admin_password"` | no |
+| <a name="input_private_subnet_name"></a> [private\_subnet\_name](#input\_private\_subnet\_name) | The name prefix of the private subnets to pull in as a data source. | `string` | n/a | yes |
+| <a name="input_public_subnet_name"></a> [public\_subnet\_name](#input\_public\_subnet\_name) | The name prefix of the public subnets to pull in as a data source. | `string` | n/a | yes |
+| <a name="input_r53_record"></a> [r53\_record](#input\_r53\_record) | The FQDN for the route 53 record. | `string` | n/a | yes |
+| <a name="input_region"></a> [region](#input\_region) | The AWS region to deploy the infrastructure too. | `string` | n/a | yes |
+| <a name="input_retention_in_days"></a> [retention\_in\_days](#input\_retention\_in\_days) | How many days to retain cloudwatch logs. | `number` | `90` | no |
+| <a name="input_scale_down_number"></a> [scale\_down\_number](#input\_scale\_down\_number) | Number of agents to destroy when scaling down. | `number` | `-1` | no |
+| <a name="input_scale_up_number"></a> [scale\_up\_number](#input\_scale\_up\_number) | Number of agents to create when scaling up. | `number` | `1` | no |
+| <a name="input_ssl_certificate"></a> [ssl\_certificate](#input\_ssl\_certificate) | The name of the SSL certificate to use on the load balancer. | `string` | n/a | yes |
+| <a name="input_ssm_parameter"></a> [ssm\_parameter](#input\_ssm\_parameter) | The full ssm parameter path that will house the api key and master admin password. Also used to grant IAM access to this resource. | `string` | n/a | yes |
+| <a name="input_swarm_version"></a> [swarm\_version](#input\_swarm\_version) | The version of swarm plugin to install on the agents. Update by updating this value. | `string` | `"3.32"` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | tags to define locally, and interpolate into the tags in this module. | `map(string)` | n/a | yes |
+| <a name="input_vpc_name"></a> [vpc\_name](#input\_vpc\_name) | The name of the VPC the infrastructure will be deployed to. | `string` | n/a | yes |
 
 ## Outputs
 
-| Name            | Description                                                               |
-| --------------- | ------------------------------------------------------------------------- |
-| agent_asg_name  | The name of the agent asg. Use for adding to addition outside resources.  |
-| agent_iam_role  | The agent IAM role attributes. Use for attaching additional iam policies. |
-| master_asg_name | The name of the master asg. Use for adding to addition outside resources. |
-| master_iam_role | The master IAM role name. Use for attaching additional iam policies.      |
-| r53_record_fqdn | The fqdn of the route 53 record.                                          |
-
+| Name | Description |
+|------|-------------|
+| <a name="output_agent_asg"></a> [agent\_asg](#output\_agent\_asg) | The name of the agent asg. Use for adding to addition outside resources. |
+| <a name="output_agent_iam_role"></a> [agent\_iam\_role](#output\_agent\_iam\_role) | The agent IAM role attributes. Use for attaching additional iam policies. |
+| <a name="output_lb_dns_name"></a> [lb\_dns\_name](#output\_lb\_dns\_name) | The DNS name of the load balancer. |
+| <a name="output_lb_zone_id"></a> [lb\_zone\_id](#output\_lb\_zone\_id) | The canonical hosted zone ID of the load balancer. |
+| <a name="output_master_asg"></a> [master\_asg](#output\_master\_asg) | The name of the master asg. Use for adding to addition outside resources. |
+| <a name="output_master_iam_role"></a> [master\_iam\_role](#output\_master\_iam\_role) | The master IAM role name. Use for attaching additional iam policies. |
+| <a name="output_r53_record"></a> [r53\_record](#output\_r53\_record) | The fqdn of the route 53 record. |
+<!-- END_TF_DOCS -->
 ## Known Issues/Limitations
 
 N/A
@@ -278,7 +355,7 @@ Agent nodes are also set in an autoscaling group, using the Amazon Linux 2 AMI, 
 
 Agents connect to the master node through the Jenkins SWARM plugin. The agents are smart enough to get the master's IP address using the AWS CLI and API key from the parameter store. Agents launch, configure themselves, and connect to the master. If agents cannot connect or get disconnected, the agent will self-terminate, causing the autoscaling group to create a new instance. This helps in the case that the agents launch, and the master has not yet published the API key to the parameter store. After it is published, the agents and master will sync up. If the master is terminated, the agents will automatically terminate.
 
-Agents are spot instances, keeping cost down.
+Agents are spot instances, keeping cost down. Optinally you can disable it. It is useful, when jenkins used to deploy infrastructure resources with terraform. Spot instances can be removed by AWS with 2 minutes warning and that can cause errors in terraform state, if it is a long running deployment. 
 
 ### Agent Scaling Details
 
