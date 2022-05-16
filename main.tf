@@ -199,11 +199,11 @@ resource "aws_autoscaling_group" "agent_asg" {
   vpc_zone_identifier = data.aws_subnet_ids.private.ids
 
   mixed_instances_policy {
-
+    
     instances_distribution {
-      on_demand_base_capacity                  = 0
-      on_demand_percentage_above_base_capacity = 0
-      spot_instance_pools                      = length(var.instance_type)
+      on_demand_base_capacity                  = (var.enable_spot_insances==1)?0:100
+      on_demand_percentage_above_base_capacity = (var.enable_spot_insances==1)?0:100
+      spot_instance_pools                      = (var.enable_spot_insances==1)?length(var.instance_type):0
     }
 
     launch_template {
@@ -212,11 +212,8 @@ resource "aws_autoscaling_group" "agent_asg" {
         version            = var.agent_lt_version
       }
 
-      dynamic "override" {
-        for_each = var.instance_type
-        content {
-          instance_type = override.value
-        }
+     override {
+        instance_type = var.instance_type[0]
       }
 
     }
@@ -252,7 +249,7 @@ resource "aws_launch_template" "agent_lt" {
       volume_size           = var.agent_volume_size
       encrypted             = true
       delete_on_termination = true
-      volume_type           = "gp2"
+      volume_type           = "gp3"
     }
   }
 
@@ -433,10 +430,11 @@ data "template_file" "agent_write_files" {
   template = file("${path.module}/init/agent-write-files.cfg")
 
   vars = {
-    agent_logs    = aws_cloudwatch_log_group.agent_logs.name
-    aws_region    = var.region
-    executors     = var.executors
-    swarm_version = var.swarm_version
+    agent_logs        = aws_cloudwatch_log_group.agent_logs.name
+    aws_region        = var.region
+    executors         = var.executors
+    swarm_version     = var.swarm_version
+    jenkins_username  = var.jenkins_username
   }
 }
 
@@ -535,7 +533,7 @@ resource "aws_launch_template" "master_lt" {
       volume_size           = 25
       encrypted             = true
       delete_on_termination = true
-      volume_type           = "gp2"
+      volume_type           = "gp3"
     }
   }
 
@@ -740,6 +738,8 @@ data "template_file" "master_write_files" {
     aws_region               = var.region
     executors_min            = var.agent_min * var.executors
     master_logs              = aws_cloudwatch_log_group.master_logs.name
+    #jenkins_username  = var.jenkins_username
+
   }
 }
 
@@ -751,6 +751,8 @@ data "template_file" "master_runcmd" {
     aws_region      = var.region
     jenkins_version = var.jenkins_version
     master_storage  = aws_efs_file_system.master_efs.id
+    #jenkins_username  = var.jenkins_username
+
   }
 }
 
