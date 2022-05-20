@@ -813,7 +813,7 @@ resource "aws_lb_target_group" "master_tg" {
   health_check {
     port                = "traffic-port"
     path                = "/login"
-    timeout             = 300
+    timeout             = 120
     healthy_threshold   = 2
     unhealthy_threshold = 10
     matcher             = "200-299"
