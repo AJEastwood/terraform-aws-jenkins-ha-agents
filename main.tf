@@ -813,10 +813,11 @@ resource "aws_lb_target_group" "master_tg" {
   health_check {
     port                = "traffic-port"
     path                = "/login"
-    timeout             = 25
+    timeout             = 300
     healthy_threshold   = 2
-    unhealthy_threshold = 4
+    unhealthy_threshold = 10
     matcher             = "200-299"
+    interval = 300
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-master-tg" })
