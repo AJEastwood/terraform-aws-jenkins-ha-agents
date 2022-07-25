@@ -341,7 +341,8 @@ resource "aws_iam_role_policy" "agent_inline_policy" {
     {
       "Action": [
         "ec2:DescribeInstances",
-        "autoscaling:DescribeAutoScalingGroups"
+        "autoscaling:DescribeAutoScalingGroups",
+        "ecr:DescribeImages"
       ],
       "Effect": "Allow",
       "Resource": "*"
