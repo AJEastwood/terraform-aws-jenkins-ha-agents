@@ -175,3 +175,8 @@ variable "cidr_ingress" {
   type        = list(string)
   default     = ["0.0.0.0/0"]
 }
+
+variable "r53_record" {
+  description = "The FQDN for the route 53 record."
+  type        = string
+}
