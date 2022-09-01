@@ -48,7 +48,6 @@ data "template_file" "agent_runcmd" {
   vars = {
     api_ssm_parameter = "${var.ssm_parameter}${var.api_ssm_parameter}"
     aws_region        = var.region
-    master_asg        = aws_autoscaling_group.master_asg.name
     swarm_version     = var.swarm_version
   }
 }
@@ -56,3 +55,43 @@ data "template_file" "agent_runcmd" {
 data "template_file" "agent_end" {
   template = file("${path.module}/init/agent-end.cfg")
 }
+
+data "aws_security_group" "bastion_sg" {
+  vpc_id = data.aws_vpc.vpc.id
+
+  filter {
+    name   = "group-name"
+    values = [var.bastion_sg_name]
+  }
+}
+
+data "aws_vpc" "vpc" {
+  tags = {
+    Name = var.vpc_name
+  }
+}
+
+data "aws_ami" "amzn2_ami" {
+  most_recent = true
+  owners      = [var.ami_owner]
+
+  filter {
+    name   = "name"
+    values = [var.ami_name]
+  }
+}
+
+data "aws_caller_identity" "current" {}
+
+data "aws_subnet_ids" "private" {
+  vpc_id = data.aws_vpc.vpc.id
+
+  tags = {
+    Name = var.private_subnet_name
+  }
+}
+
+data "aws_iam_policy" "ssm_policy" {
+  arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+

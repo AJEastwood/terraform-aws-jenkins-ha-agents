@@ -256,7 +256,7 @@ resource "aws_security_group" "master_sg" {
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    security_groups = [aws_security_group.lb_sg.id, aws_security_group.agent_sg.id]
+    security_groups = [aws_security_group.lb_sg.id, data.aws_security_group.agent_sg.id]
     self            = false
   }
 
@@ -272,7 +272,7 @@ resource "aws_security_group" "master_sg" {
     from_port       = 49817
     to_port         = 49817
     protocol        = "tcp"
-    security_groups = [aws_security_group.agent_sg.id]
+    security_groups = [data.aws_security_group.agent_sg.id]
     self            = false
   }
 
@@ -328,5 +328,64 @@ resource "aws_cloudwatch_log_group" "master_logs" {
   name              = "${var.application}-master-logs"
   retention_in_days = var.retention_in_days
   tags              = merge(var.tags, { "Name" = "${var.application}-master-logs" })
+}
+
+  ##################################################################
+  # Route 53
+  ##################################################################
+
+resource "aws_route53_record" "r53_record" {
+  zone_id = data.aws_route53_zone.r53_zone.zone_id
+  name    = var.r53_record
+  type    = "A"
+
+  alias {
+    name                   = "dualstack.${aws_lb.lb.dns_name}"
+    zone_id                = aws_lb.lb.zone_id
+    evaluate_target_health = false
+  }
+}
+
+  ##################################################################
+  # Load Balancer
+  ##################################################################
+resource "aws_lb" "lb" {
+  name                       = "${var.application}-lb"
+  idle_timeout               = 60
+  internal                   = false
+  security_groups            = [aws_security_group.lb_sg.id]
+  subnets                    = data.aws_subnet_ids.public.ids
+  enable_deletion_protection = false
+
+  tags = merge(var.tags, { "Name" = "${var.application}-lb" })
+}
+
+resource "aws_security_group" "lb_sg" {
+  name        = "${var.application}-lb-sg"
+  description = "${var.application}-lb-sg"
+  vpc_id      = data.aws_vpc.vpc.id
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = var.cidr_ingress
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = var.cidr_ingress
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = merge(var.tags, { "Name" = "${var.application}-lb-sg" })
 }
 

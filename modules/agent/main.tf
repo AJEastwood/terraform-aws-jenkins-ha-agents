@@ -171,7 +171,6 @@ resource "aws_iam_role_policy_attachment" "agent_policy_attachment" {
   ##################################################################
 
 resource "aws_autoscaling_group" "agent_asg" {
-  # depends_on = [aws_autoscaling_group.master_asg]
 
   max_size = var.agent_max
   min_size = var.agent_min

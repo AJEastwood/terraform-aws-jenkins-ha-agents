@@ -101,6 +101,10 @@ variable "retention_in_days" {
   default     = 90
 }
 
+variable "ssl_certificate" {
+  description = "The name of the SSL certificate to use on the load balancer."
+  type        = string
+}
 
 variable "ssm_parameter" {
   description = "The full ssm parameter path that will house the api key and master admin password. Also used to grant IAM access to this resource."
@@ -116,4 +120,58 @@ variable "tags" {
 variable "jenkins_username" {
   description = "Special username to connect the agents. Useful when you want to use Azure AD authentication, then you need to pass an username that exisits in the AD, otherwise agents wont be able to connect to amster when you switch over to Azure AD auth with configuration as code plugin"
   type = string
+}
+
+variable "agent_min" {
+  description = "The minimum number of agents to run in the agent ASG."
+  type        = number
+  default     = 2
+}
+
+variable "bastion_sg_name" {
+  description = "The bastion security group name to allow to ssh to the master/agents."
+  type        = string
+}
+
+variable "agent_sg_name" {
+  description = "The agent security group name to allow to ssh to the master."
+  type        = string
+}
+
+variable "vpc_name" {
+  description = "The name of the VPC the infrastructure will be deployed to."
+  type        = string
+}
+
+variable "ami_name" {
+  description = "The name of the amzn2 ami. Used for searching for AMI id."
+  type        = string
+  default     = "amzn2-ami-hvm-2.0.*-x86_64-gp2"
+}
+
+variable "ami_owner" {
+  description = "The owner of the amzn2 ami."
+  type        = string
+  default     = "amazon"
+}
+
+variable "private_subnet_name" {
+  description = "The name prefix of the private subnets to pull in as a data source."
+  type        = string
+}
+
+variable "public_subnet_name" {
+  description = "The name prefix of the public subnets to pull in as a data source."
+  type        = string
+}
+
+variable "domain_name" {
+  description = "The root domain name used to lookup the route53 zone information."
+  type        = string
+}
+
+variable "cidr_ingress" {
+  description = "IP address cidr ranges allowed access to the LB."
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
 }

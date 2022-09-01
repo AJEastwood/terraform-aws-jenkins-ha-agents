@@ -116,3 +116,35 @@ variable "enable_spot_insances" {
   type = number
   default = 1
 }
+
+variable "bastion_sg_name" {
+  description = "The bastion security group name to allow to ssh to the master/agents."
+  type        = string
+}
+
+variable "vpc_name" {
+  description = "The name of the VPC the infrastructure will be deployed to."
+  type        = string
+}
+
+variable "ami_name" {
+  description = "The name of the amzn2 ami. Used for searching for AMI id."
+  type        = string
+  default     = "amzn2-ami-hvm-2.0.*-x86_64-gp2"
+}
+
+variable "ami_owner" {
+  description = "The owner of the amzn2 ami."
+  type        = string
+  default     = "amazon"
+}
+
+variable "private_subnet_name" {
+  description = "The name prefix of the private subnets to pull in as a data source."
+  type        = string
+}
+
+variable "r53_record" {
+  description = "The FQDN for the route 53 record."
+  type        = string
+}
