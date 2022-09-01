@@ -313,7 +313,7 @@ resource "aws_efs_mount_target" "mount_targets" {
   for_each = toset(data.aws_subnet_ids.private.ids)
   file_system_id  = aws_efs_file_system.master_efs.id
   subnet_id       = each.key
-  security_groups = [aws_security_group.master_storage_sg[0].id]
+  security_groups = [aws_security_group.master_storage_sg.id]
 }
 
 resource "aws_ssm_parameter" "admin_password" {
