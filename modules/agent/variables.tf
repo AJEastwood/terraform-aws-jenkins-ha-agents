@@ -143,8 +143,3 @@ variable "private_subnet_name" {
   description = "The name prefix of the private subnets to pull in as a data source."
   type        = string
 }
-
-variable "r53_record" {
-  description = "The FQDN for the route 53 record."
-  type        = string
-}

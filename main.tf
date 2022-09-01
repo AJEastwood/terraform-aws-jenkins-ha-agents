@@ -13,9 +13,6 @@ terraform {
   }
 }
 
-
-
-
 module "master_node" {
   count                       = var.enable_master_node == true ? 1 : 0
   source                      = "./modules/master"
@@ -58,6 +55,7 @@ module "agent_node" {
   agent_max                   = var.agent_max
   agent_min                   = var.agent_min
   agent_volume_size           = var.agent_volume_size
+  private_subnet_name         = var.private_subnet_name
   bastion_sg_name             = var.bastion_sg_name
   api_ssm_parameter           = var.api_ssm_parameter
   ami_name                    = var.ami_name
