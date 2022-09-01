@@ -3,6 +3,12 @@ variable "admin_password" {
   type        = string
 }
 
+variable "enable_master_node" {
+  description = "Enable or Disable provisioning a Jenkins Master Node with it's dependency"
+  type        = string
+  default     = true
+}
+
 variable "agent_lt_version" {
   description = "The version of the agent launch template to use. Only use if you need to programatically select an older version of the launch template. Not recommended to change."
   type        = string
