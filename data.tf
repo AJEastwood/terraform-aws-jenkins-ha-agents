@@ -150,6 +150,7 @@ data "template_file" "agent_end" {
 }
 
 data "template_file" "master_write_files" {
+  count    = var.enable_master_node == true ? 1 : 0 
   template = file("${path.module}/init/master-write-files.cfg")
 
   vars = {

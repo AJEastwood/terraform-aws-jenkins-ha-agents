@@ -607,7 +607,7 @@ resource "aws_efs_mount_target" "mount_targets" {
   for_each = {for k, v in toset(data.aws_subnet_ids.private.ids): k => v if var.enable_master_node}
   file_system_id  = aws_efs_file_system.master_efs.id
   subnet_id       = each.key
-  security_groups = [aws_security_group.master_storage_sg.id]
+  security_groups = [aws_security_group.master_storage_sg[0].id]
 }
 
 resource "aws_security_group" "master_storage_sg" {
