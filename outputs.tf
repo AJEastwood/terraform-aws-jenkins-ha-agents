@@ -25,7 +25,7 @@ output "master_asg" {
 
 output "master_iam_role" {
   description = "The master IAM role name. Use for attaching additional iam policies."
-  value       = aws_iam_role.master_iam_role.name
+  value       = aws_iam_role.master_iam_role[count.index].name
 }
 
 output "r53_record" {
