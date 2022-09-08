@@ -3,8 +3,8 @@ variable "admin_password" {
   type        = string
 }
 
-variable "enable_master_node" {
-  description = "Enable or Disable provisioning a Jenkins Master Node with it's dependency"
+variable "enable_node" {
+  description = "Enable or Disable provisioning a Jenkins Node with it's dependency"
   type        = string
   default     = true 
 }
@@ -180,6 +180,12 @@ variable "r53_record" {
 variable "region" {
   description = "The AWS region to deploy the infrastructure too."
   type        = string
+}
+
+variable "aws_master_region" {
+  description = "The AWS region Where the Master Node is belonged to."
+  type        = string
+  default     = "eu-west-1"
 }
 
 variable "retention_in_days" {

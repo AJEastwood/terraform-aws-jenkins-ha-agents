@@ -14,7 +14,7 @@ terraform {
 }
 
 module "master_node" {
-  count                       = var.enable_master_node == true ? 1 : 0
+  count                       = var.enable_node == true ? 1 : 0
   source                      = "./modules/master"
   admin_password              = var.admin_password
   agent_min                   = var.agent_min
@@ -50,6 +50,7 @@ module "master_node" {
 }
 
 module "agent_node" {
+  count                       = var.enable_node == true ? 1 : 0
   source                      = "./modules/agent"
   jenkins_username            = var.jenkins_username
   agent_max                   = var.agent_max
@@ -71,6 +72,7 @@ module "agent_node" {
   executors                   = var.executors
   instance_type               = var.instance_type
   region                      = var.region
+  aws_master_region           = var.aws_master_region
   ssm_parameter               = var.ssm_parameter
   swarm_version               = var.swarm_version
   tags                        = var.tags

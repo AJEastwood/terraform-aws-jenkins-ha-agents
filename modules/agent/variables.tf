@@ -72,6 +72,12 @@ variable "region" {
   type        = string
 }
 
+variable "aws_master_region" {
+  description = "The AWS region Where the Master Node is belonged to."
+  type        = string
+  default     = "eu-west-1"
+}
+
 variable "retention_in_days" {
   description = "How many days to retain cloudwatch logs."
   type        = number
