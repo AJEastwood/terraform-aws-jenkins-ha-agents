@@ -6,13 +6,11 @@ variable "admin_password" {
 variable "enable_master_node" {
   description = "Enable or Disable provisioning a Jenkins Mode Node with it's dependency"
   type        = string
-  default     = true 
 }
 
 variable "enable_agent_node" {
   description = "Enable or Disable provisioning a Jenkins Agent Node with it's dependency"
   type        = string
-  default     = true 
 }
 
 variable "agent_lt_version" {
