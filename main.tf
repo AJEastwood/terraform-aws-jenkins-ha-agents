@@ -14,7 +14,7 @@ terraform {
 }
 
 module "master_node" {
-  count                       = var.enable_master_node == true ? 1 : 0
+  # count                       = var.enable_master_node == true ? 1 : 0
   source                      = "./modules/master"
   admin_password              = var.admin_password
   agent_min                   = var.agent_min
@@ -50,7 +50,7 @@ module "master_node" {
 }
 
 module "agent_node" {
-  count                       = var.enable_agent_node == true ? 1 : 0
+  # count                       = var.enable_agent_node == true ? 1 : 0
   source                      = "./modules/agent"
   jenkins_username            = var.jenkins_username
   agent_max                   = var.agent_max
