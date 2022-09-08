@@ -3,8 +3,14 @@ variable "admin_password" {
   type        = string
 }
 
-variable "enable_node" {
-  description = "Enable or Disable provisioning a Jenkins Node with it's dependency"
+variable "enable_master_node" {
+  description = "Enable or Disable provisioning a Jenkins Mode Node with it's dependency"
+  type        = string
+  default     = true 
+}
+
+variable "enable_agent_node" {
+  description = "Enable or Disable provisioning a Jenkins Agent Node with it's dependency"
   type        = string
   default     = true 
 }
