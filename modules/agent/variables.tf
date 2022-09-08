@@ -54,6 +54,12 @@ variable "extra_agent_userdata_merge" {
   default     = "list(append)+dict(recurse_array)+str()"
 }
 
+variable "enable_agent_node" {
+  description = "Enable or Disable provisioning a Jenkins Agent Node with it's dependency"
+  type        = string
+  default     = true 
+}
+
 variable "instance_type" {
   description = "The type of instances to use for both ASG's. The first value in the list will be set as the master instance."
   type        = list(string)

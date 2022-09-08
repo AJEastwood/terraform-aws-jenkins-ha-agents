@@ -9,6 +9,12 @@ variable "api_ssm_parameter" {
   default     = "/api_key"
 }
 
+variable "enable_master_node" {
+  description = "Enable or Disable provisioning a Jenkins Mode Node with it's dependency"
+  type        = string
+  default     = true 
+}
+
 variable "application" {
   description = "The application name, to be interpolated into many resources and tags. Unique to this project."
   type        = string
