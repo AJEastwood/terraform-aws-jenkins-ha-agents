@@ -158,16 +158,6 @@ data "aws_security_group" "us_bastion_sg" {
   }
 }
 
-
-data "aws_security_group" "agent_sg" {
-  vpc_id = data.aws_vpc.vpc.id
-
-  filter {
-    name   = "group-name"
-    values = [var.agent_sg_name]
-  }
-}
-
 data "aws_caller_identity" "current" {}
 
 data "aws_subnet_ids" "private" {

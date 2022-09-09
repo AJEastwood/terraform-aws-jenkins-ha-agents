@@ -256,7 +256,7 @@ resource "aws_security_group" "master_sg" {
     from_port       = 8080
     to_port         = 8080
     protocol        = "tcp"
-    security_groups = [aws_security_group.lb_sg.id, data.aws_security_group.agent_sg.id]
+    security_groups = [aws_security_group.lb_sg.id, aws_security_group.agent_sg.id]
     self            = false
   }
 
@@ -272,7 +272,7 @@ resource "aws_security_group" "master_sg" {
     from_port       = 49817
     to_port         = 49817
     protocol        = "tcp"
-    security_groups = [data.aws_security_group.agent_sg.id]
+    security_groups = [aws_security_group.agent_sg.id]
     self            = false
   }
 

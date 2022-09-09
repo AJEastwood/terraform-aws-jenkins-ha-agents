@@ -85,11 +85,6 @@ variable "us_bastion_sg_name" {
   type        = string
 }
 
-variable "agent_sg_name" {
-  description = "The agent security group name to allow to ssh to the master."
-  type        = string
-}
-
 variable "cidr_ingress" {
   description = "IP address cidr ranges allowed access to the LB."
   type        = list(string)
