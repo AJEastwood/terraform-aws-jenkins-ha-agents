@@ -127,7 +127,7 @@ resource "aws_autoscaling_policy" "us_agent_scale_up_policy" {
   autoscaling_group_name = aws_autoscaling_group.us_agent_asg.name
 }
 
-resource "aws_autoscaling_policy" "agent_scale_down_policy" {
+resource "aws_autoscaling_policy" "us_agent_scale_down_policy" {
   name                   = "${var.us_application}-agent-down-policy"
   scaling_adjustment     = var.scale_down_number
   adjustment_type        = "ChangeInCapacity"
