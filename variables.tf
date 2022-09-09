@@ -63,6 +63,12 @@ variable "application" {
   default     = "jenkins"
 }
 
+variable "us_application" {
+  description = "The us application name, to be interpolated into many resources and tags. Unique to this project."
+  type        = string
+  default     = "jenkins"
+}
+
 variable "auto_update_plugins_cron" {
   description = "Cron to set to auto update plugins. The default is set to February 31st, disabling this functionality. Overwrite this variable to have plugins auto update."
   type        = string
@@ -71,6 +77,11 @@ variable "auto_update_plugins_cron" {
 
 variable "bastion_sg_name" {
   description = "The bastion security group name to allow to ssh to the master/agents."
+  type        = string
+}
+
+variable "us_bastion_sg_name" {
+  description = "The us region bastion security group name to allow to ssh to the master/agents."
   type        = string
 }
 
@@ -173,6 +184,11 @@ variable "private_subnet_name" {
   type        = string
 }
 
+variable "us_private_subnet_name" {
+  description = "The name prefix of the private subnets in us region to pull in as a data source."
+  type        = string
+}
+
 variable "public_subnet_name" {
   description = "The name prefix of the public subnets to pull in as a data source."
   type        = string
@@ -187,6 +203,13 @@ variable "region" {
   description = "The AWS region to deploy the infrastructure too."
   type        = string
 }
+
+variable "us_agent_region" {
+  description = "The AWS us region to deploy the agent worker too."
+  type        = string
+}
+
+
 
 variable "aws_master_region" {
   description = "The AWS region Where the Master Node is belonged to."
@@ -235,6 +258,11 @@ variable "tags" {
 
 variable "vpc_name" {
   description = "The name of the VPC the infrastructure will be deployed to."
+  type        = string
+}
+
+variable "us_vpc_name" {
+  description = "The name of the us region VPC the infrastructure will be deployed to."
   type        = string
 }
 
