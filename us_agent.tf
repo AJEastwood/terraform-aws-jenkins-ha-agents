@@ -119,7 +119,7 @@ resource "aws_autoscaling_group" "us_agent_asg" {
 
 
 resource "aws_autoscaling_policy" "us_agent_scale_up_policy" {
-  provider    = aws.us
+  provider               = aws.us
   name                   = "${var.us_application}-agent-up-policy"
   scaling_adjustment     = var.scale_up_number
   adjustment_type        = "ChangeInCapacity"
