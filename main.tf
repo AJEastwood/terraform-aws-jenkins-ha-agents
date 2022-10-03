@@ -85,6 +85,7 @@ resource "aws_lb" "lb" {
   enable_deletion_protection = false
 
   tags = merge(var.tags, { "Name" = "${var.application}-lb" })
+  drop_invalid_header_fields = true
 }
 
 resource "aws_security_group" "lb_sg" {
@@ -97,6 +98,7 @@ resource "aws_security_group" "lb_sg" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = var.cidr_ingress
+    description = "HTTPS-443-TCP"
   }
 
   ingress {
@@ -104,6 +106,7 @@ resource "aws_security_group" "lb_sg" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = var.cidr_ingress
+    description = "HTTP-80-TCP"
   }
 
   egress {
@@ -111,6 +114,7 @@ resource "aws_security_group" "lb_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-lb-sg" })
@@ -277,6 +281,10 @@ resource "aws_launch_template" "agent_lt" {
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-agent-lt" })
+
+  metadata_options {
+       http_tokens = "required"
+  }  
 }
 
 resource "aws_security_group" "agent_sg" {
@@ -290,6 +298,7 @@ resource "aws_security_group" "agent_sg" {
     protocol        = "tcp"
     security_groups = [data.aws_security_group.bastion_sg.id]
     self            = false
+    description     = "SSH-22-TCP"
   }
 
   egress {
@@ -297,6 +306,7 @@ resource "aws_security_group" "agent_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-agent-sg" })
@@ -562,6 +572,10 @@ resource "aws_launch_template" "master_lt" {
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-master-lt" })
+
+  metadata_options {
+       http_tokens = "required"
+  }    
 }
 
 resource "aws_security_group" "master_sg" {
@@ -575,6 +589,7 @@ resource "aws_security_group" "master_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.lb_sg.id, aws_security_group.agent_sg.id]
     self            = false
+    description     = "Allow traffic from LB and Agent"
   }
 
   ingress {
@@ -583,6 +598,7 @@ resource "aws_security_group" "master_sg" {
     protocol        = "tcp"
     security_groups = [data.aws_security_group.bastion_sg.id]
     self            = false
+    description     = "Allow SSH traffic Bastion security group"
   }
 
   ingress {
@@ -591,6 +607,7 @@ resource "aws_security_group" "master_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.agent_sg.id]
     self            = false
+    description     = "Allow Connection to Agent"
   }
 
   egress {
@@ -598,6 +615,7 @@ resource "aws_security_group" "master_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-master-sg" })
@@ -791,6 +809,7 @@ resource "aws_security_group" "master_storage_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.master_sg.id]
     self            = false
+    description     = "Allow nfs connection to master"
   }
 
   egress {
@@ -798,6 +817,7 @@ resource "aws_security_group" "master_storage_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"   
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-master-storage-sg" })
