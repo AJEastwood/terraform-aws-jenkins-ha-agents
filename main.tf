@@ -77,6 +77,7 @@ data "aws_iam_policy" "ssm_policy" {
 }
 
 resource "aws_lb" "lb" {
+  #tfsec:ignore:aws-elb-alb-not-public
   name                       = "${var.application}-lb"
   idle_timeout               = 60
   internal                   = false
@@ -89,6 +90,7 @@ resource "aws_lb" "lb" {
 }
 
 resource "aws_security_group" "lb_sg" {
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
   name        = "${var.application}-lb-sg"
   description = "${var.application}-lb-sg"
   vpc_id      = data.aws_vpc.vpc.id
@@ -288,6 +290,7 @@ resource "aws_launch_template" "agent_lt" {
 }
 
 resource "aws_security_group" "agent_sg" {
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
   name        = "${var.application}-agent-sg"
   description = "${var.application}-agent-sg"
   vpc_id      = data.aws_vpc.vpc.id
@@ -404,6 +407,7 @@ resource "aws_iam_role_policy_attachment" "agent_policy_attachment" {
 }
 
 resource "aws_cloudwatch_log_group" "agent_logs" {
+  #tfsec:ignore:aws-cloudwatch-log-group-customer-key
   name              = "${var.application}-agent-logs"
   retention_in_days = var.retention_in_days
   tags              = merge(var.tags, { "Name" = "${var.application}-agent-logs" })
@@ -579,6 +583,7 @@ resource "aws_launch_template" "master_lt" {
 }
 
 resource "aws_security_group" "master_sg" {
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
   name        = "${var.application}-master-sg"
   description = "${var.application}-master-sg"
   vpc_id      = data.aws_vpc.vpc.id
@@ -707,6 +712,7 @@ resource "aws_iam_role_policy_attachment" "master_policy_attachment" {
 }
 
 resource "aws_cloudwatch_log_group" "master_logs" {
+  #tfsec:ignore:aws-cloudwatch-log-group-customer-key
   name              = "${var.application}-master-logs"
   retention_in_days = var.retention_in_days
   tags              = merge(var.tags, { "Name" = "${var.application}-master-logs" })
@@ -799,6 +805,7 @@ resource "aws_efs_mount_target" "mount_targets" {
 }
 
 resource "aws_security_group" "master_storage_sg" {
+  #tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
   name        = "${var.application}-master-storage-sg"
   description = "${var.application}-master-storage-sg"
   vpc_id      = data.aws_vpc.vpc.id
