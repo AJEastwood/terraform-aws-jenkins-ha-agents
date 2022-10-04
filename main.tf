@@ -383,7 +383,7 @@ resource "aws_iam_role_policy" "agent_inline_policy" {
       "Resource": [
         "arn:aws:ssm:${var.region}:${data.aws_caller_identity.current.account_id}:parameter${var.ssm_parameter}${var.api_ssm_parameter}"
       ]
-    },
+    },         
     {
       "Action": "ec2:TerminateInstances",
       "Effect": "Allow",
@@ -396,6 +396,33 @@ resource "aws_iam_role_policy" "agent_inline_policy" {
         }
       }
     }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "agent_secret_manager_inline_policy" {
+  name = "jenkins-secrets-manager-credentials-provider"
+  role = aws_iam_role.agent_iam_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "AllowGetSecretValue",
+          "Effect": "Allow",
+          "Action": "secretsmanager:GetSecretValue",
+          "Resource": [
+              "*"
+          ]
+      },
+      {
+          "Sid": "AllowListSecretValue",
+          "Effect": "Allow",
+          "Action": "secretsmanager:ListSecrets",
+          "Resource": "*"
+      }
   ]
 }
 EOF
@@ -706,10 +733,37 @@ resource "aws_iam_role_policy" "master_inline_policy" {
 EOF
 }
 
+resource "aws_iam_role_policy" "master_secret_manager_inline_policy" {
+  name = "jenkins-secrets-manager-credentials-provider"
+  role = aws_iam_role.master_iam_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "AllowGetSecretValue",
+          "Effect": "Allow",
+          "Action": "secretsmanager:GetSecretValue",
+          "Resource": "*"
+      },
+      {
+          "Sid": "AllowListSecretValue",
+          "Effect": "Allow",
+          "Action": "secretsmanager:ListSecrets",
+          "Resource": "*"
+      }
+  ]
+}
+EOF
+}
+
+
 resource "aws_iam_role_policy_attachment" "master_policy_attachment" {
   role       = aws_iam_role.master_iam_role.name
   policy_arn = data.aws_iam_policy.ssm_policy.arn
 }
+
 
 #tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "master_logs" {
