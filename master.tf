@@ -86,6 +86,32 @@ resource "aws_iam_role_policy" "master_inline_policy" {
 EOF
 }
 
+resource "aws_iam_role_policy" "master_secret_manager_inline_policy" {
+  name = "jenkins-secrets-manager-credentials-provider"
+  role = aws_iam_role.master_iam_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "AllowGetSecretValue",
+          "Effect": "Allow",
+          "Action": "secretsmanager:GetSecretValue",
+          "Resource": "*"
+      },
+      {
+          "Sid": "AllowListSecretValue",
+          "Effect": "Allow",
+          "Action": "secretsmanager:ListSecrets",
+          "Resource": "*"
+      }
+  ]
+}
+EOF
+}
+
+
 resource "aws_iam_role_policy_attachment" "master_policy_attachment" {
   role       = aws_iam_role.master_iam_role.name
   policy_arn = data.aws_iam_policy.ssm_policy.arn
@@ -243,10 +269,13 @@ resource "aws_launch_template" "master_lt" {
     resource_type = "volume"
     tags          = local.tags.master
   }
-
+  metadata_options {
+       http_tokens = "required"
+  }  
   tags = merge(var.tags, { "Name" = "${var.application}-master-lt" })
 }
 
+#tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "master_sg" {
   name        = "${var.application}-master-sg"
   description = "${var.application}-master-sg"
@@ -258,6 +287,7 @@ resource "aws_security_group" "master_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.lb_sg.id, aws_security_group.agent_sg.id]
     self            = false
+    description     = "Allow traffic from LB and Agent"
   }
 
   ingress {
@@ -266,6 +296,7 @@ resource "aws_security_group" "master_sg" {
     protocol        = "tcp"
     security_groups = [data.aws_security_group.bastion_sg.id]
     self            = false
+    description     = "Allow SSH traffic Bastion security group"
   }
 
   ingress {
@@ -274,6 +305,7 @@ resource "aws_security_group" "master_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.agent_sg.id]
     self            = false
+    description     = "Allow Connection to Agent"
   }
 
   egress {
@@ -281,11 +313,13 @@ resource "aws_security_group" "master_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-master-sg" })
 }
 
+#tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "master_storage_sg" {
   name        = "${var.application}-master-storage-sg"
   description = "${var.application}-master-storage-sg"
@@ -297,6 +331,7 @@ resource "aws_security_group" "master_storage_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.master_sg.id]
     self            = false
+    description     = "Allow nfs connection to master"
   }
 
   egress {
@@ -304,6 +339,7 @@ resource "aws_security_group" "master_storage_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"   
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-master-storage-sg" })
@@ -324,6 +360,7 @@ resource "aws_ssm_parameter" "admin_password" {
   overwrite   = true
 }
 
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "master_logs" {
   name              = "${var.application}-master-logs"
   retention_in_days = var.retention_in_days
@@ -349,6 +386,8 @@ resource "aws_route53_record" "r53_record" {
   ##################################################################
   # Load Balancer
   ##################################################################
+
+#tfsec:ignore:aws-elb-alb-not-public
 resource "aws_lb" "lb" {
   name                       = "${var.application}-lb"
   idle_timeout               = 60
@@ -358,8 +397,10 @@ resource "aws_lb" "lb" {
   enable_deletion_protection = false
 
   tags = merge(var.tags, { "Name" = "${var.application}-lb" })
+  drop_invalid_header_fields = true
 }
 
+#tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "lb_sg" {
   name        = "${var.application}-lb-sg"
   description = "${var.application}-lb-sg"
@@ -370,6 +411,7 @@ resource "aws_security_group" "lb_sg" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = var.cidr_ingress
+    description = "HTTPS-443-TCP"
   }
 
   ingress {
@@ -377,6 +419,7 @@ resource "aws_security_group" "lb_sg" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = var.cidr_ingress
+    description = "HTTP-80-TCP"
   }
 
   egress {
@@ -384,6 +427,7 @@ resource "aws_security_group" "lb_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-lb-sg" })

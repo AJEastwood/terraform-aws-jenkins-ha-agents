@@ -61,6 +61,8 @@ resource "aws_cloudwatch_metric_alarm" "agent_cpu_alarm" {
   ##################################################################
   # Cloud Watch Log Group
   ##################################################################
+  
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key 
 resource "aws_cloudwatch_log_group" "agent_logs" {
   name              = "${var.application}-agent-logs"
   retention_in_days = var.retention_in_days
@@ -156,6 +158,33 @@ resource "aws_iam_role_policy" "agent_inline_policy" {
         }
       }
     }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "agent_secret_manager_inline_policy" {
+  name = "jenkins-secrets-manager-credentials-provider"
+  role = aws_iam_role.agent_iam_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "AllowGetSecretValue",
+          "Effect": "Allow",
+          "Action": "secretsmanager:GetSecretValue",
+          "Resource": [
+              "*"
+          ]
+      },
+      {
+          "Sid": "AllowListSecretValue",
+          "Effect": "Allow",
+          "Action": "secretsmanager:ListSecrets",
+          "Resource": "*"
+      }
   ]
 }
 EOF
@@ -264,6 +293,9 @@ resource "aws_launch_template" "agent_lt" {
     tags          = local.tags.agent
   }
 
+  metadata_options {
+       http_tokens = "required"
+  }  
   tags = merge(var.tags, { "Name" = "${var.application}-agent-lt" })
 }
 
@@ -291,6 +323,8 @@ resource "aws_autoscaling_policy" "agent_scale_down_policy" {
   ##################################################################
   # Seucrity Group
   ##################################################################
+
+#tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "agent_sg" {
   name        = "${var.application}-agent-sg"
   description = "${var.application}-agent-sg"
@@ -302,6 +336,7 @@ resource "aws_security_group" "agent_sg" {
     protocol        = "tcp"
     security_groups = [data.aws_security_group.bastion_sg.id]
     self            = false
+    description     = "SSH-22-TCP"
   }
 
   egress {
@@ -309,6 +344,7 @@ resource "aws_security_group" "agent_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-agent-sg" })

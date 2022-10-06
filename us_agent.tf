@@ -1,6 +1,8 @@
   ##################################################################
   # Cloud Watch Log Group
   ##################################################################
+  
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "us_agent_logs" {
   provider          = aws.us
   name              = "${var.us_application}-agent-logs"
@@ -60,7 +62,9 @@ resource "aws_launch_template" "us_agent_lt" {
     resource_type = "volume"
     tags          = local.tags.us_agent
   }
-
+  metadata_options {
+       http_tokens = "required"
+  }  
   tags = merge(var.tags, { "Name" = "${var.us_application}-agent-lt" })
 }
 
@@ -138,6 +142,8 @@ resource "aws_autoscaling_policy" "us_agent_scale_down_policy" {
   ##################################################################
   # Seucrity Group
   ##################################################################
+
+#tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "us_agent_sg" {
   provider    = aws.us
   name        = "${var.us_application}-agent-sg"
@@ -150,6 +156,7 @@ resource "aws_security_group" "us_agent_sg" {
     protocol        = "tcp"
     security_groups = [data.aws_security_group.us_bastion_sg.id]
     self            = false
+    description     = "SSH-22-TCP"
   }
 
   egress {
@@ -157,6 +164,7 @@ resource "aws_security_group" "us_agent_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "All protocols"
   }
 
   tags = merge(var.tags, { "Name" = "${var.us_application}-agent-sg" })
