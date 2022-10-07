@@ -41,7 +41,7 @@ resource "aws_launch_template" "us_agent_lt" {
   }
 
   image_id      = data.aws_ami.us_amzn2_ami.id
-  key_name      = var.key_name
+  key_name      = var.us_key_name
   ebs_optimized = false
 
   instance_type = var.instance_type[0]
@@ -132,6 +132,7 @@ resource "aws_autoscaling_policy" "us_agent_scale_up_policy" {
 }
 
 resource "aws_autoscaling_policy" "us_agent_scale_down_policy" {
+  provider               = aws.us
   name                   = "${var.us_application}-agent-down-policy"
   scaling_adjustment     = var.scale_down_number
   adjustment_type        = "ChangeInCapacity"

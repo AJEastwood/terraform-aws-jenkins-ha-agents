@@ -224,6 +224,7 @@ data "aws_ami" "amzn2_ami" {
 }
 
 data "aws_ami" "us_amzn2_ami" {
+  provider = aws.us
   most_recent = true
   owners      = [var.ami_owner]
 

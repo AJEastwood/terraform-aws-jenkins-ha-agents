@@ -168,6 +168,12 @@ variable "key_name" {
   default     = null
 }
 
+variable "us_key_name" {
+  description = "US SSH Key to launch instances."
+  type        = string
+  default     = null
+}
+
 variable "master_lt_version" {
   description = "The version of the master launch template to use. Only use if you need to programatically select an older version of the launch template. Not recommended to change."
   type        = string
