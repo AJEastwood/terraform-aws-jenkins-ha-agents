@@ -1,7 +1,7 @@
   ##################################################################
   # Cloud Watch Log Group
   ##################################################################
-  
+
 #tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "us_agent_logs" {
   provider          = aws.us
@@ -95,7 +95,7 @@ resource "aws_autoscaling_group" "us_agent_asg" {
 
     launch_template {
       launch_template_specification {
-        launch_template_id = aws_launch_template.agent_lt.id
+        launch_template_id = aws_launch_template.us_agent_lt.id
         version            = var.agent_lt_version
       }
 
