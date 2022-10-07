@@ -48,7 +48,7 @@ data "template_file" "agent_runcmd" {
   vars = {
     api_ssm_parameter = "${var.ssm_parameter}${var.api_ssm_parameter}"
     aws_master_region = var.aws_master_region
-    master_asg        = "headquarter-admin-jks-master-asg"
+    master_asg        = aws_autoscaling_group.master_asg.name
     swarm_version     = var.swarm_version
   }
 }
