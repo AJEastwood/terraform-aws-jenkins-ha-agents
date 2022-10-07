@@ -45,6 +45,12 @@ variable "ami_name" {
   default     = "amzn2-ami-hvm-2.0.*-x86_64-gp2"
 }
 
+variable "us_ami_name" {
+  description = "The name of the us amzn2 ami. Used for searching for AMI id."
+  type        = string
+  default     = "amzn2-ami-hvm-2.0.*-x86_64-gp2"
+}
+
 variable "ami_owner" {
   description = "The owner of the amzn2 ami."
   type        = string

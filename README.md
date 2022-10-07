@@ -256,6 +256,7 @@ No modules.
 | <a name="input_agent_min"></a> [agent\_min](#input\_agent\_min) | The minimum number of agents to run in the agent ASG. | `number` | `2` | no |
 | <a name="input_agent_volume_size"></a> [agent\_volume\_size](#input\_agent\_volume\_size) | The size of the agent volume. | `number` | `16` | no |
 | <a name="input_ami_name"></a> [ami\_name](#input\_ami\_name) | The name of the amzn2 ami. Used for searching for AMI id. | `string` | `"amzn2-ami-hvm-2.0.*-x86_64-gp2"` | no |
+| <a name="input_us_ami_name"></a> [ami\_name](#input\_us\_ami\_name) | The name of the us amzn2 ami. Used for searching for AMI id. | `string` | `"amzn2-ami-hvm-2.0.*-x86_64-gp2"` | no |
 | <a name="input_ami_owner"></a> [ami\_owner](#input\_ami\_owner) | The owner of the amzn2 ami. | `string` | `"amazon"` | no |
 | <a name="input_api_ssm_parameter"></a> [api\_ssm\_parameter](#input\_api\_ssm\_parameter) | The path value of the API key, stored in ssm parameter store. | `string` | `"/api_key"` | no |
 | <a name="input_application"></a> [application](#input\_application) | The application name, to be interpolated into many resources and tags. Unique to this project. | `string` | `"jenkins"` | no |

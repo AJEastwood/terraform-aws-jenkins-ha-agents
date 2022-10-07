@@ -211,6 +211,8 @@ data "aws_vpc" "us_vpc" {
   }
 }
 
+
+
 data "aws_ami" "amzn2_ami" {
   most_recent = true
   owners      = [var.ami_owner]
@@ -218,5 +220,15 @@ data "aws_ami" "amzn2_ami" {
   filter {
     name   = "name"
     values = [var.ami_name]
+  }
+}
+
+data "aws_ami" "us_amzn2_ami" {
+  most_recent = true
+  owners      = [var.ami_owner]
+
+  filter {
+    name   = "name"
+    values = [var.us_ami_name]
   }
 }
