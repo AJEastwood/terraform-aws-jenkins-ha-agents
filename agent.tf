@@ -154,7 +154,9 @@ resource "aws_iam_role_policy" "agent_inline_policy" {
       ],
       "Condition":{
         "StringEquals":{
-            "ec2:ResourceTag/Name":"${var.application}-agent"
+            "ec2:ResourceTag/Name":"${var.application}-agent",
+            "ec2:ResourceTag/Name":"${var.us_application}-agent",
+
         }
       }
     }
