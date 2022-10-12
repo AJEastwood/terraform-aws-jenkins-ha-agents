@@ -150,7 +150,8 @@ resource "aws_iam_role_policy" "agent_inline_policy" {
       "Action": "ec2:TerminateInstances",
       "Effect": "Allow",
       "Resource":[
-        "arn:aws:ec2:${var.region}:${data.aws_caller_identity.current.account_id}:instance/*"
+        "arn:aws:ec2:${var.region}:${data.aws_caller_identity.current.account_id}:instance/*",
+        "arn:aws:ec2:${var.us_agent_region}:${data.aws_caller_identity.current.account_id}:instance/*"
       ],
       "Condition":{
         "StringEquals":{
@@ -184,6 +185,40 @@ resource "aws_iam_role_policy" "agent_secret_manager_inline_policy" {
           "Effect": "Allow",
           "Action": "secretsmanager:ListSecrets",
           "Resource": "*"
+      }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "agent_helm_pull_allow_inline_policy" {
+  name = "helm-pull-allow"
+  role = aws_iam_role.agent_iam_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "files",
+          "Effect": "Allow",
+          "Action": [
+              "s3:PutObjectAcl",
+              "s3:PutObject",
+              "s3:GetObjectAcl",
+              "s3:GetObject",
+              "s3:DeleteObject"
+          ],
+          "Resource": [
+              "arn:aws:s3:::headquarter-youlend-helm-repo/*",
+              "arn:aws:s3:::headquarter-youlend-helm-repo"
+          ]
+      },
+      {
+          "Sid": "bucket",
+          "Effect": "Allow",
+          "Action": "s3:ListBucket",
+          "Resource": "arn:aws:s3:::headquarter-youlend-helm-repo"
       }
   ]
 }
