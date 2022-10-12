@@ -287,7 +287,16 @@ resource "aws_security_group" "master_sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.lb_sg.id, aws_security_group.agent_sg.id]
     self            = false
-    description     = "Allow traffic from LB and Agent"
+    description     = "Allow traffic from Agent"
+  }
+
+    ingress {
+    from_port       = 8080
+    to_port         = 8080
+    protocol        = "tcp"
+    cidr_blocks     = [data.aws_vpc.us_vpc.cidr_block]
+    self            = false
+    description     = "Allow traffic from US Agent"
   }
 
   ingress {
@@ -298,6 +307,7 @@ resource "aws_security_group" "master_sg" {
     self            = false
     description     = "Allow SSH traffic Bastion security group"
   }
+  
 
   ingress {
     from_port       = 49817
@@ -306,6 +316,15 @@ resource "aws_security_group" "master_sg" {
     security_groups = [aws_security_group.agent_sg.id]
     self            = false
     description     = "Allow Connection to Agent"
+  }
+
+    ingress {
+    from_port       = 49817
+    to_port         = 49817
+    protocol        = "tcp"
+    cidr_blocks     = [data.aws_vpc.us_vpc.cidr_block]
+    self            = false
+    description     = "Allow Connection to US Agent"
   }
 
   egress {
