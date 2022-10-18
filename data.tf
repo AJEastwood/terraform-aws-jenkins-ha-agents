@@ -34,7 +34,7 @@ data "template_file" "agent_write_files" {
   template = file("${path.module}/init/agent-write-files.cfg")
 
   vars = {
-    swarm_label       = "swarm-eu hello"
+    swarm_label       = "swarm-eu" #All Labels you want Agent to have must be separated with space
     agent_logs        = aws_cloudwatch_log_group.agent_logs.name
     aws_region        = var.region
     executors         = var.executors
@@ -93,7 +93,7 @@ data "template_file" "usagent_write_files" {
   template = file("${path.module}/init/usagent-write-files.cfg")
 
   vars = {
-    swarm_label       = "swarm-us"
+    swarm_label       = "swarm-us" #All Labels you want Agent to have must be separated with space
     agent_logs        = aws_cloudwatch_log_group.agent_logs.name
     aws_region        = var.us_agent_region
     executors         = var.executors
