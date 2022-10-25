@@ -1,8 +1,8 @@
 
-  ##################################################################
-  # Agent User Data
-  ##################################################################
-  data "template_cloudinit_config" "agent_init" {
+##################################################################
+# Agent User Data
+##################################################################
+data "template_cloudinit_config" "agent_init" {
   gzip          = true
   base64_encode = true
 
@@ -34,12 +34,12 @@ data "template_file" "agent_write_files" {
   template = file("${path.module}/init/agent-write-files.cfg")
 
   vars = {
-    swarm_label       = "swarm-eu" #All Labels you want Agent to have must be separated with space
-    agent_logs        = aws_cloudwatch_log_group.agent_logs.name
-    aws_region        = var.region
-    executors         = var.executors
-    swarm_version     = var.swarm_version
-    jenkins_username  = var.jenkins_username
+    swarm_label      = "swarm-eu" #All Labels you want Agent to have must be separated with space
+    agent_logs       = aws_cloudwatch_log_group.agent_logs.name
+    aws_region       = var.region
+    executors        = var.executors
+    swarm_version    = var.swarm_version
+    jenkins_username = var.jenkins_username
   }
 }
 
@@ -58,10 +58,10 @@ data "template_file" "agent_end" {
   template = file("${path.module}/init/agent-end.cfg")
 }
 
-  ##################################################################
-  # US Agent User Data
-  ##################################################################
-   data "template_cloudinit_config" "usagent_init" {
+##################################################################
+# US Agent User Data
+##################################################################
+data "template_cloudinit_config" "usagent_init" {
   gzip          = true
   base64_encode = true
 
@@ -93,19 +93,19 @@ data "template_file" "usagent_write_files" {
   template = file("${path.module}/init/usagent-write-files.cfg")
 
   vars = {
-    swarm_label       = "swarm-us" #All Labels you want Agent to have must be separated with space
-    agent_logs        = aws_cloudwatch_log_group.agent_logs.name
-    aws_region        = var.us_agent_region
-    executors         = var.executors
-    swarm_version     = var.swarm_version
-    jenkins_username  = var.jenkins_username
+    swarm_label      = "swarm-us" #All Labels you want Agent to have must be separated with space
+    agent_logs       = aws_cloudwatch_log_group.agent_logs.name
+    aws_region       = var.us_agent_region
+    executors        = var.executors
+    swarm_version    = var.swarm_version
+    jenkins_username = var.jenkins_username
   }
 }
 
-  ##################################################################
-  # Master User Data
-  ##################################################################
-  data "template_cloudinit_config" "master_init" {
+##################################################################
+# Master User Data
+##################################################################
+data "template_cloudinit_config" "master_init" {
   gzip          = true
   base64_encode = true
 
@@ -194,7 +194,7 @@ data "aws_security_group" "bastion_sg" {
 
 data "aws_security_group" "us_bastion_sg" {
   provider = aws.us
-  vpc_id = data.aws_vpc.us_vpc.id
+  vpc_id   = data.aws_vpc.us_vpc.id
 
   filter {
     name   = "group-name"
@@ -213,8 +213,8 @@ data "aws_subnet_ids" "private" {
 }
 
 data "aws_subnet_ids" "us_private" {
-  provider = aws.us  
-  vpc_id = data.aws_vpc.us_vpc.id
+  provider = aws.us
+  vpc_id   = data.aws_vpc.us_vpc.id
   tags = {
     Name = var.us_private_subnet_name
   }
@@ -269,7 +269,7 @@ data "aws_ami" "amzn2_ami" {
 }
 
 data "aws_ami" "us_amzn2_ami" {
-  provider = aws.us
+  provider    = aws.us
   most_recent = true
   owners      = [var.ami_owner]
 

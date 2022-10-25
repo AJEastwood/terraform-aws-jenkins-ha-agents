@@ -1,20 +1,20 @@
-    ##################################################################
-  # Instance Profile
-  ##################################################################
+##################################################################
+# Instance Profile
+##################################################################
 resource "aws_iam_instance_profile" "master_ip" {
-  name  = "${var.application}-master-ip"
-  path  = "/"
-  role  = aws_iam_role.master_iam_role.name
+  name = "${var.application}-master-ip"
+  path = "/"
+  role = aws_iam_role.master_iam_role.name
 }
 
 
- ##################################################################
-  # IAM ROLE 
-  ##################################################################
+##################################################################
+# IAM ROLE 
+##################################################################
 
 resource "aws_iam_role" "master_iam_role" {
-  name  = "${var.application}-master-iam-role"
-  path  = "/"
+  name = "${var.application}-master-iam-role"
+  path = "/"
 
   assume_role_policy = <<EOF
 {
@@ -98,13 +98,20 @@ resource "aws_iam_role_policy" "master_secret_manager_inline_policy" {
           "Sid": "AllowGetSecretValue",
           "Effect": "Allow",
           "Action": "secretsmanager:GetSecretValue",
-          "Resource": "*"
+          "Resource": "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:*",
+          "Condition":{
+            "ForAllValues:StringEquals":{
+                "aws:TagKeys": "jenkins:credentials:type"
+            }           
+          }            
       },
       {
           "Sid": "AllowListSecretValue",
           "Effect": "Allow",
           "Action": "secretsmanager:ListSecrets",
-          "Resource": "*"
+          "Resource": [
+            "*"
+          ]      
       }
   ]
 }
@@ -118,12 +125,12 @@ resource "aws_iam_role_policy_attachment" "master_policy_attachment" {
 }
 
 
-  ##################################################################
-  # Load Balancer
-  ##################################################################
+##################################################################
+# Load Balancer
+##################################################################
 
 resource "aws_lb_target_group" "master_tg" {
-  name    = "${var.application}-master-tg"
+  name = "${var.application}-master-tg"
 
   port                 = 8080
   protocol             = "HTTP"
@@ -137,7 +144,7 @@ resource "aws_lb_target_group" "master_tg" {
     healthy_threshold   = 2
     unhealthy_threshold = 10
     matcher             = "200-299"
-    interval = 300
+    interval            = 300
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-master-tg" })
@@ -171,11 +178,11 @@ resource "aws_lb_listener" "master_http_listener" {
     }
   }
 }
-  
-  
-  ##################################################################
-  # Autoscaling Group
-  ##################################################################
+
+
+##################################################################
+# Autoscaling Group
+##################################################################
 
 resource "aws_autoscaling_group" "master_asg" {
   max_size = 1
@@ -219,9 +226,9 @@ resource "aws_autoscaling_group" "master_asg" {
   }
 }
 
-  ##################################################################
-  # Launch Template
-  ##################################################################
+##################################################################
+# Launch Template
+##################################################################
 
 resource "aws_launch_template" "master_lt" {
   name        = "${var.application}-master-lt"
@@ -270,8 +277,8 @@ resource "aws_launch_template" "master_lt" {
     tags          = local.tags.master
   }
   metadata_options {
-       http_tokens = "required"
-  }  
+    http_tokens = "required"
+  }
   tags = merge(var.tags, { "Name" = "${var.application}-master-lt" })
 }
 
@@ -290,13 +297,13 @@ resource "aws_security_group" "master_sg" {
     description     = "Allow traffic from Agent"
   }
 
-    ingress {
-    from_port       = 8080
-    to_port         = 8080
-    protocol        = "tcp"
-    cidr_blocks     = [data.aws_vpc.us_vpc.cidr_block]
-    self            = false
-    description     = "Allow traffic from US Agent"
+  ingress {
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = [data.aws_vpc.us_vpc.cidr_block]
+    self        = false
+    description = "Allow traffic from US Agent"
   }
 
   ingress {
@@ -307,7 +314,7 @@ resource "aws_security_group" "master_sg" {
     self            = false
     description     = "Allow SSH traffic Bastion security group"
   }
-  
+
 
   ingress {
     from_port       = 49817
@@ -318,13 +325,13 @@ resource "aws_security_group" "master_sg" {
     description     = "Allow Connection to Agent"
   }
 
-    ingress {
-    from_port       = 49817
-    to_port         = 49817
-    protocol        = "tcp"
-    cidr_blocks     = [data.aws_vpc.us_vpc.cidr_block]
-    self            = false
-    description     = "Allow Connection to US Agent"
+  ingress {
+    from_port   = 49817
+    to_port     = 49817
+    protocol    = "tcp"
+    cidr_blocks = [data.aws_vpc.us_vpc.cidr_block]
+    self        = false
+    description = "Allow Connection to US Agent"
   }
 
   egress {
@@ -358,14 +365,14 @@ resource "aws_security_group" "master_storage_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "All protocols"   
+    description = "All protocols"
   }
 
   tags = merge(var.tags, { "Name" = "${var.application}-master-storage-sg" })
 }
 
 resource "aws_efs_mount_target" "mount_targets" {
-  for_each = toset(data.aws_subnet_ids.private.ids)
+  for_each        = toset(data.aws_subnet_ids.private.ids)
   file_system_id  = aws_efs_file_system.master_efs.id
   subnet_id       = each.key
   security_groups = [aws_security_group.master_storage_sg.id]
@@ -386,9 +393,9 @@ resource "aws_cloudwatch_log_group" "master_logs" {
   tags              = merge(var.tags, { "Name" = "${var.application}-master-logs" })
 }
 
-  ##################################################################
-  # Route 53
-  ##################################################################
+##################################################################
+# Route 53
+##################################################################
 
 resource "aws_route53_record" "r53_record" {
   zone_id = data.aws_route53_zone.r53_zone.zone_id
@@ -402,9 +409,9 @@ resource "aws_route53_record" "r53_record" {
   }
 }
 
-  ##################################################################
-  # Load Balancer
-  ##################################################################
+##################################################################
+# Load Balancer
+##################################################################
 
 #tfsec:ignore:aws-elb-alb-not-public
 resource "aws_lb" "lb" {
@@ -415,7 +422,7 @@ resource "aws_lb" "lb" {
   subnets                    = data.aws_subnet_ids.public.ids
   enable_deletion_protection = false
 
-  tags = merge(var.tags, { "Name" = "${var.application}-lb" })
+  tags                       = merge(var.tags, { "Name" = "${var.application}-lb" })
   drop_invalid_header_fields = true
 }
 
