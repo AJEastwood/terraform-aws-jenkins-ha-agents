@@ -1,6 +1,6 @@
-  ##################################################################
-  # Cloud Watch Alarms
-  ##################################################################
+##################################################################
+# Cloud Watch Alarms
+##################################################################
 resource "aws_cloudwatch_metric_alarm" "available_executors_low" {
   alarm_name          = "${var.application}-available-executors-low"
   alarm_description   = "Alarm if the number of available executors are two low."
@@ -58,10 +58,10 @@ resource "aws_cloudwatch_metric_alarm" "agent_cpu_alarm" {
   alarm_actions   = [aws_autoscaling_policy.agent_scale_up_policy.arn]
 }
 
-  ##################################################################
-  # Cloud Watch Log Group
-  ##################################################################
-  
+##################################################################
+# Cloud Watch Log Group
+##################################################################
+
 #tfsec:ignore:aws-cloudwatch-log-group-customer-key 
 resource "aws_cloudwatch_log_group" "agent_logs" {
   name              = "${var.application}-agent-logs"
@@ -69,9 +69,9 @@ resource "aws_cloudwatch_log_group" "agent_logs" {
   tags              = merge(var.tags, { "Name" = "${var.application}-agent-logs" })
 }
 
-  ##################################################################
-  # Instance Profile
-  ##################################################################
+##################################################################
+# Instance Profile
+##################################################################
 
 resource "aws_iam_instance_profile" "agent_ip" {
   name = "${var.application}-agent-ip"
@@ -79,9 +79,9 @@ resource "aws_iam_instance_profile" "agent_ip" {
   role = aws_iam_role.agent_iam_role.name
 }
 
- ##################################################################
-  # IAM ROLE 
-  ##################################################################
+##################################################################
+# IAM ROLE 
+##################################################################
 
 resource "aws_iam_role" "agent_iam_role" {
   name = "${var.application}-agent-iam-role"
@@ -176,15 +176,20 @@ resource "aws_iam_role_policy" "agent_secret_manager_inline_policy" {
           "Sid": "AllowGetSecretValue",
           "Effect": "Allow",
           "Action": "secretsmanager:GetSecretValue",
-          "Resource": [
-              "*"
-          ]
+          "Resource": "arn:aws:secretsmanager:${var.region}:${data.aws_caller_identity.current.account_id}:secret:*",
+          "Condition":{
+            "ForAllValues:StringEquals":{
+                "aws:TagKeys": "jenkins:credentials:type"
+            }           
+          }      
       },
       {
           "Sid": "AllowListSecretValue",
           "Effect": "Allow",
           "Action": "secretsmanager:ListSecrets",
-          "Resource": "*"
+          "Resource": [
+            "*"
+          ]         
       }
   ]
 }
@@ -230,9 +235,9 @@ resource "aws_iam_role_policy_attachment" "agent_policy_attachment" {
   policy_arn = data.aws_iam_policy.ssm_policy.arn
 }
 
-  ##################################################################
-  # AutoScaling Group
-  ##################################################################
+##################################################################
+# AutoScaling Group
+##################################################################
 
 resource "aws_autoscaling_group" "agent_asg" {
 
@@ -247,11 +252,11 @@ resource "aws_autoscaling_group" "agent_asg" {
   vpc_zone_identifier = data.aws_subnet_ids.private.ids
 
   mixed_instances_policy {
-    
+
     instances_distribution {
       #on_demand_base_capacity                  = (var.enable_spot_insances==1)?0:100
-      on_demand_percentage_above_base_capacity = (var.enable_spot_insances==1)?0:100
-      spot_instance_pools                      = (var.enable_spot_insances==1)?length(var.instance_type):0
+      on_demand_percentage_above_base_capacity = (var.enable_spot_insances == 1) ? 0 : 100
+      spot_instance_pools                      = (var.enable_spot_insances == 1) ? length(var.instance_type) : 0
     }
 
     launch_template {
@@ -260,7 +265,7 @@ resource "aws_autoscaling_group" "agent_asg" {
         version            = var.agent_lt_version
       }
 
-     override {
+      override {
         instance_type = var.instance_type[0]
       }
 
@@ -277,9 +282,9 @@ resource "aws_autoscaling_group" "agent_asg" {
   }
 }
 
-  ##################################################################
-  # Launch Template
-  ##################################################################
+##################################################################
+# Launch Template
+##################################################################
 
 resource "aws_launch_template" "agent_lt" {
   name        = "${var.application}-agent-lt"
@@ -329,14 +334,14 @@ resource "aws_launch_template" "agent_lt" {
   }
 
   metadata_options {
-       http_tokens = "required"
-  }  
+    http_tokens = "required"
+  }
   tags = merge(var.tags, { "Name" = "${var.application}-agent-lt" })
 }
 
-  ##################################################################
-  # AutoScaling Policy
-  ##################################################################
+##################################################################
+# AutoScaling Policy
+##################################################################
 
 
 resource "aws_autoscaling_policy" "agent_scale_up_policy" {
@@ -355,9 +360,9 @@ resource "aws_autoscaling_policy" "agent_scale_down_policy" {
   autoscaling_group_name = aws_autoscaling_group.agent_asg.name
 }
 
-  ##################################################################
-  # Seucrity Group
-  ##################################################################
+##################################################################
+# Seucrity Group
+##################################################################
 
 #tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "agent_sg" {

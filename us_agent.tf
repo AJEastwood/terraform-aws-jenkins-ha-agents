@@ -1,6 +1,6 @@
-  ##################################################################
-  # Cloud Watch Log Group
-  ##################################################################
+##################################################################
+# Cloud Watch Log Group
+##################################################################
 
 #tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "us_agent_logs" {
@@ -11,9 +11,9 @@ resource "aws_cloudwatch_log_group" "us_agent_logs" {
 }
 
 
-  ##################################################################
-  # Launch Template
-  ##################################################################
+##################################################################
+# Launch Template
+##################################################################
 
 resource "aws_launch_template" "us_agent_lt" {
   provider    = aws.us
@@ -63,15 +63,15 @@ resource "aws_launch_template" "us_agent_lt" {
     tags          = local.tags.us_agent
   }
   metadata_options {
-       http_tokens = "required"
-  }  
+    http_tokens = "required"
+  }
   tags = merge(var.tags, { "Name" = "${var.us_application}-agent-lt" })
 }
 
 
-  ##################################################################
-  # AutoScaling Group
-  ##################################################################
+##################################################################
+# AutoScaling Group
+##################################################################
 
 resource "aws_autoscaling_group" "us_agent_asg" {
   provider = aws.us
@@ -86,11 +86,11 @@ resource "aws_autoscaling_group" "us_agent_asg" {
   vpc_zone_identifier = data.aws_subnet_ids.us_private.ids
 
   mixed_instances_policy {
-    
+
     instances_distribution {
       #on_demand_base_capacity                  = (var.enable_spot_insances==1)?0:100
-      on_demand_percentage_above_base_capacity = (var.enable_spot_insances==1)?0:100
-      spot_instance_pools                      = (var.enable_spot_insances==1)?length(var.instance_type):0
+      on_demand_percentage_above_base_capacity = (var.enable_spot_insances == 1) ? 0 : 100
+      spot_instance_pools                      = (var.enable_spot_insances == 1) ? length(var.instance_type) : 0
     }
 
     launch_template {
@@ -99,7 +99,7 @@ resource "aws_autoscaling_group" "us_agent_asg" {
         version            = var.agent_lt_version
       }
 
-     override {
+      override {
         instance_type = var.instance_type[0]
       }
 
@@ -117,9 +117,9 @@ resource "aws_autoscaling_group" "us_agent_asg" {
 }
 
 
-  ##################################################################
-  # AutoScaling Policy
-  ##################################################################
+##################################################################
+# AutoScaling Policy
+##################################################################
 
 
 resource "aws_autoscaling_policy" "us_agent_scale_up_policy" {
@@ -140,9 +140,9 @@ resource "aws_autoscaling_policy" "us_agent_scale_down_policy" {
   autoscaling_group_name = aws_autoscaling_group.us_agent_asg.name
 }
 
-  ##################################################################
-  # Seucrity Group
-  ##################################################################
+##################################################################
+# Seucrity Group
+##################################################################
 
 #tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr
 resource "aws_security_group" "us_agent_sg" {

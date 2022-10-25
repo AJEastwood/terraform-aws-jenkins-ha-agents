@@ -263,11 +263,11 @@ variable "us_vpc_name" {
 
 variable "jenkins_username" {
   description = "Special username to connect the agents. Useful when you want to use Azure AD authentication, then you need to pass an username that exisits in the AD, otherwise agents wont be able to connect to amster when you switch over to Azure AD auth with configuration as code plugin"
-  type = string
+  type        = string
 }
 
 variable "enable_spot_insances" {
   description = "1 if it is enabled, 0 to disable spot insance pools. Useful to disable if jenkins used to deploy infrastructure resources with terraform preventing broken terraform state when spot instance removed from the agent pool"
-  type = number
-  default = 1
+  type        = number
+  default     = 1
 }
