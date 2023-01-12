@@ -243,7 +243,7 @@ variable "ssm_parameter" {
 variable "swarm_version" {
   description = "The version of swarm plugin to install on the agents. Update by updating this value."
   type        = string
-  default     = "3.32"
+  default     = "3.39"
 }
 
 variable "tags" {
