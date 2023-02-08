@@ -208,7 +208,7 @@ data "aws_subnet" "private" {
   vpc_id = data.aws_vpc.vpc.id
 
   tags = {
-    Name = var.private_subnet_name
+    Name = var.aws_subnet.private.private_subnet_name
   }
 }
 
@@ -216,7 +216,7 @@ data "aws_subnet" "us_private" {
   provider = aws.us
   vpc_id   = data.aws_vpc.us_vpc.id
   tags = {
-    Name = var.us_private_subnet_name
+    Name = var.aws_subnet.us_private.us_private_subnet_name
   }
 }
 
@@ -224,7 +224,7 @@ data "aws_subnet" "public" {
   vpc_id = data.aws_vpc.vpc.id
 
   tags = {
-    Name = var.public_subnet_name
+    Name = var.aws_subnet.public.public_subnet_name
   }
 }
 
