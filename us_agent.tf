@@ -83,7 +83,7 @@ resource "aws_autoscaling_group" "us_agent_asg" {
 
   name = "${var.us_application}-agent-asg"
 
-  vpc_zone_identifier = data.aws_subnet.us_private.id
+  vpc_zone_identifier = data.aws_subnet_ids.us_private.ids
 
   mixed_instances_policy {
 
