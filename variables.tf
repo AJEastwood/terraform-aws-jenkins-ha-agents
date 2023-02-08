@@ -174,11 +174,6 @@ variable "password_ssm_parameter" {
   default     = "/admin_password"
 }
 
-variable "aws_subnet" {
-  description = "The subnet to pull in as a data source."
-  type        = string
-}
-
 variable "private_subnet_name" {
   description = "The name prefix of the private subnets to pull in as a data source."
   type        = string
