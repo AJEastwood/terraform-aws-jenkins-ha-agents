@@ -333,6 +333,14 @@ resource "aws_security_group" "master_sg" {
     self        = false
     description = "Allow Connection to US Agent"
   }
+  ingress {
+    from_port   = 34981
+    to_port     = 34981
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    self        = false
+    description = "Jenkins cli"
+  }
 
   egress {
     from_port   = 0
