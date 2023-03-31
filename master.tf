@@ -282,7 +282,7 @@ resource "aws_launch_template" "master_lt" {
   tags = merge(var.tags, { "Name" = "${var.application}-master-lt" })
 }
 
-#tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr tfsec:ignore:aws-vpc-no-public-egress-sgr
+#tfsec:ignore:aws-ec2-no-public-egress-sgr tfsec:ignore:aws-ec2-no-public-ingress-sgr tfsec:ignore:aws-vpc-no-public-egress-sgr tfsec:ignore:aws-vpc-no-public-ingress-sgr
 resource "aws_security_group" "master_sg" {
   name        = "${var.application}-master-sg"
   description = "${var.application}-master-sg"

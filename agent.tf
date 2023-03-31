@@ -401,6 +401,7 @@ resource "aws_autoscaling_schedule" "agent_asg_scale_down" {
   max_size               = 1
   desired_capacity       = 1
   recurrence             = "0 22 * * *" # every day at 10pm UTC
+  time_zone              = "Europe/London"
   autoscaling_group_name = aws_autoscaling_group.agent_asg.name
 }
 
@@ -411,6 +412,7 @@ resource "aws_autoscaling_schedule" "agent_asg_scale_up" {
   max_size               = 3
   desired_capacity       = 3
   recurrence             = "0 18 * * 1-5" # Monday-Friday at 6pm UTC
+  time_zone              = "Europe/London"
   autoscaling_group_name = aws_autoscaling_group.agent_asg.name
 }
 
@@ -421,6 +423,7 @@ resource "aws_autoscaling_schedule" "agent_asg_scale_up_peak" {
   max_size               = 6
   desired_capacity       = 6
   recurrence             = "0 10 * * 1-5" # Monday-Friday at 10am UTC
+  time_zone              = "Europe/London"
   autoscaling_group_name = aws_autoscaling_group.agent_asg.name
 }
 
