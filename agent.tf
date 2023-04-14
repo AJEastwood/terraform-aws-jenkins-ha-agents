@@ -394,36 +394,24 @@ resource "aws_security_group" "agent_sg" {
 # Scheduled Actions
 ##################################################################
 
-# Create a scheduled scaling policy to scale down the ASG during out-of-office hours
-resource "aws_autoscaling_schedule" "agent_asg_scale_down" {
-  scheduled_action_name  = "agent-asg-scale-down"
-  min_size               = 1
-  max_size               = 1
-  desired_capacity       = 1
-  recurrence             = "0 22 * * *" # every day at 10pm UTC
-  time_zone              = "Europe/London"
-  autoscaling_group_name = aws_autoscaling_group.agent_asg.name
-}
-
 # Create a scheduled scaling policy to scale up the ASG during office hours
 resource "aws_autoscaling_schedule" "agent_asg_scale_up" {
   scheduled_action_name  = "agent-asg-scale-up"
   min_size               = 1
-  max_size               = 3
-  desired_capacity       = 3
-  recurrence             = "0 18 * * 1-5" # Monday-Friday at 6pm UTC
-  time_zone              = "Europe/London"
-  autoscaling_group_name = aws_autoscaling_group.agent_asg.name
-}
-
-# Create a scheduled scaling policy to scale up the ASG during deployment peak
-resource "aws_autoscaling_schedule" "agent_asg_scale_up_peak" {
-  scheduled_action_name  = "agent-asg-scale-up-peak"
-  min_size               = 1
   max_size               = 6
   desired_capacity       = 6
-  recurrence             = "0 10 * * 1-5" # Monday-Friday at 10am UTC
+  recurrence             = "0 7 * * 1-5" # Monday-Friday at 7am UTC
   time_zone              = "Europe/London"
   autoscaling_group_name = aws_autoscaling_group.agent_asg.name
 }
 
+# Create a scheduled scaling policy to scale down the ASG during out-of-office hours
+resource "aws_autoscaling_schedule" "agent_asg_scale_down" {
+  scheduled_action_name  = "agent-asg-scale-down"
+  min_size               = 1
+  max_size               = 2
+  desired_capacity       = 2
+  recurrence             = "0 23 * * *" # every day at 11pm UTC
+  time_zone              = "Europe/London"
+  autoscaling_group_name = aws_autoscaling_group.agent_asg.name
+}
