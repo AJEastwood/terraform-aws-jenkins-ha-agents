@@ -177,6 +177,7 @@ resource "aws_security_group" "us_agent_sg" {
 
 # Create a scheduled scaling policy to scale up the ASG during office hours
 resource "aws_autoscaling_schedule" "us_agent_asg_scale_up" {
+  provider               = aws.us
   scheduled_action_name  = "us_agent-asg-scale-up"
   min_size               = 1
   max_size               = 6
@@ -188,6 +189,7 @@ resource "aws_autoscaling_schedule" "us_agent_asg_scale_up" {
 
 # Create a scheduled scaling policy to scale down the ASG during out-of-office hours
 resource "aws_autoscaling_schedule" "us_agent_asg_scale_down" {
+  provider               = aws.us
   scheduled_action_name  = "us_agent-asg-scale-down"
   min_size               = 1
   max_size               = 2
