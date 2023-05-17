@@ -189,6 +189,18 @@ variable "scale_up_number_db" {
   default     = 1
 }
 
+variable "scale_down_number_qa" {
+  description = "Number of QA agents to destroy when scaling down."
+  type        = number
+  default     = -1
+}
+
+variable "scale_up_number_qa" {
+  description = "Number of QA agents to create when scaling up."
+  type        = number
+  default     = 1
+}
+
 variable "ssl_certificate" {
   description = "The name of the SSL certificate to use on the load balancer."
   type        = string

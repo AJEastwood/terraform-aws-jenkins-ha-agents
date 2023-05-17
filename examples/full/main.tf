@@ -48,9 +48,6 @@ module "jenkins_ha_agents" {
   scale_down_number = var.scale_down_number
   scale_up_number   = var.scale_up_number
 
-  scale_down_number_db = var.scale_down_number_db
-  scale_up_number_db   = var.scale_up_number_db
-
   auto_update_plugins_cron = var.auto_update_plugins_cron
 
   custom_plugins              = data.template_file.custom_plugins.rendered
