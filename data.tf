@@ -43,6 +43,7 @@ data "template_file" "agent_write_files" {
   }
 }
 
+
 data "template_file" "agent_runcmd" {
   template = file("${path.module}/init/agent-runcmd.cfg")
 
@@ -183,6 +184,54 @@ resource "aws_efs_file_system" "master_efs" {
   tags = merge(var.tags, { "Name" = "${var.application}-master-efs" })
 }
 
+##################################################################
+# Database Agent User Data
+##################################################################
+
+data "template_cloudinit_config" "agent_db_init" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "agent.cfg"
+    content_type = "text/cloud-config"
+    content      = data.template_file.agent_db_write_files.rendered
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = data.template_file.agent_runcmd.rendered
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = var.extra_agent_userdata
+    merge_type   = var.extra_agent_userdata_merge
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = data.template_file.agent_end.rendered
+    merge_type   = "list(append)+dict(recurse_array)+str()"
+  }
+}
+
+data "template_file" "agent_db_write_files" {
+  template = file("${path.module}/init/agent-write-files.cfg")
+
+  vars = {
+    swarm_label      = "swarm-db" #All Labels you want Agent to have must be separated with space
+    agent_logs       = aws_cloudwatch_log_group.agent_logs.name
+    aws_region       = var.region
+    executors        = var.executors
+    swarm_version    = var.swarm_version
+    jenkins_username = var.jenkins_username
+  }
+}
+
+##################################################################
+# Other Data
+##################################################################
 data "aws_security_group" "bastion_sg" {
   vpc_id = data.aws_vpc.vpc.id
 
@@ -241,8 +290,6 @@ data "aws_route53_zone" "r53_zone" {
   name = var.domain_name
 }
 
-
-
 data "aws_vpc" "vpc" {
   tags = {
     Name = var.vpc_name
@@ -255,8 +302,6 @@ data "aws_vpc" "us_vpc" {
     Name = var.us_vpc_name
   }
 }
-
-
 
 data "aws_ami" "amzn2_ami" {
   most_recent = true

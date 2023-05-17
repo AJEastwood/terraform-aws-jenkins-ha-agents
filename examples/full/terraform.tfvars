@@ -6,6 +6,8 @@ agent_minx = 2
 
 agent_volume_size = 16
 
+agent_db_volume_size = 16
+
 ami_name = "amzn2-ami-hvm-2.0.*-x86_64-gp2"
 
 ami_owner = "amazon"
