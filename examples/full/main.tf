@@ -27,10 +27,11 @@ locals {
 module "jenkins_ha_agents" {
   source = "../../"
 
-  admin_password    = var.admin_password
-  agent_max         = var.agent_max
-  agent_min         = var.agent_min
-  agent_volume_size = var.agent_volume_size
+  admin_password       = var.admin_password
+  agent_max            = var.agent_max
+  agent_min            = var.agent_min
+  agent_volume_size    = var.agent_volume_size
+  agent_db_volume_size = var.agent_db_volume_size
 
   efs_mode                   = var.efs_mode
   efs_provisioned_throughput = var.efs_provisioned_throughput
@@ -46,6 +47,9 @@ module "jenkins_ha_agents" {
   key_name          = var.key_name
   scale_down_number = var.scale_down_number
   scale_up_number   = var.scale_up_number
+
+  scale_down_number_db = var.scale_down_number_db
+  scale_up_number_db   = var.scale_up_number_db
 
   auto_update_plugins_cron = var.auto_update_plugins_cron
 

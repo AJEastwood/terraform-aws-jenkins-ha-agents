@@ -27,6 +27,12 @@ variable "agent_volume_size" {
   default     = 16
 }
 
+variable "agent_db_volume_size" {
+  description = "The size of the database agent volume."
+  type        = number
+  default     = 16
+}
+
 variable "ami_name" {
   description = "The name of the amzn2 ami. Used for searching for AMI id."
   type        = string
@@ -226,6 +232,18 @@ variable "scale_down_number" {
 
 variable "scale_up_number" {
   description = "Number of agents to create when scaling up."
+  type        = number
+  default     = 1
+}
+
+variable "scale_down_number_db" {
+  description = "Number of database agents to destroy when scaling down."
+  type        = number
+  default     = -1
+}
+
+variable "scale_up_number_db" {
+  description = "Number of database agents to create when scaling up."
   type        = number
   default     = 1
 }
