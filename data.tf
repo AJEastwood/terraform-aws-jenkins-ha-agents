@@ -313,7 +313,7 @@ data "aws_subnets" "us_private" {
   provider = aws.us
   filter {
     name   = "vpc-id"
-    values = [data.aws_vpc.vpc.id]
+    values = [data.aws_vpc.us_vpc.id]
   }
 
   tags = {
