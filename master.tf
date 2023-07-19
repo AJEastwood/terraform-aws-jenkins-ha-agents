@@ -9,7 +9,7 @@ resource "aws_iam_instance_profile" "master_ip" {
 
 
 ##################################################################
-# IAM ROLE 
+# IAM ROLE
 ##################################################################
 
 resource "aws_iam_role" "master_iam_role" {
@@ -102,8 +102,8 @@ resource "aws_iam_role_policy" "master_secret_manager_inline_policy" {
           "Condition":{
             "ForAllValues:StringEquals":{
                 "aws:TagKeys": "jenkins:credentials:type"
-            }           
-          }            
+            }
+          }
       },
       {
           "Sid": "AllowListSecretValue",
@@ -111,7 +111,7 @@ resource "aws_iam_role_policy" "master_secret_manager_inline_policy" {
           "Action": "secretsmanager:ListSecrets",
           "Resource": [
             "*"
-          ]      
+          ]
       }
   ]
 }

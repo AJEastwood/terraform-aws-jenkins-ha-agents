@@ -62,7 +62,7 @@ resource "aws_cloudwatch_metric_alarm" "agent_cpu_alarm" {
 # Cloud Watch Log Group
 ##################################################################
 
-#tfsec:ignore:aws-cloudwatch-log-group-customer-key 
+#tfsec:ignore:aws-cloudwatch-log-group-customer-key
 resource "aws_cloudwatch_log_group" "agent_logs" {
   name              = "${var.application}-agent-logs"
   retention_in_days = var.retention_in_days
@@ -80,7 +80,7 @@ resource "aws_iam_instance_profile" "agent_ip" {
 }
 
 ##################################################################
-# IAM ROLE 
+# IAM ROLE
 ##################################################################
 
 resource "aws_iam_role" "agent_iam_role" {
@@ -180,8 +180,8 @@ resource "aws_iam_role_policy" "agent_secret_manager_inline_policy" {
           "Condition":{
             "ForAllValues:StringEquals":{
                 "aws:TagKeys": "jenkins:credentials:type"
-            }           
-          }      
+            }
+          }
       },
       {
           "Sid": "AllowListSecretValue",
@@ -189,7 +189,7 @@ resource "aws_iam_role_policy" "agent_secret_manager_inline_policy" {
           "Action": "secretsmanager:ListSecrets",
           "Resource": [
             "*"
-          ]         
+          ]
       }
   ]
 }
