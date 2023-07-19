@@ -12,7 +12,7 @@ resource "aws_autoscaling_group" "agent_qa_asg" {
 
   name = "${var.application}-qa-agent-asg"
 
-  vpc_zone_identifier = data.aws_subnet_ids.private.ids
+  vpc_zone_identifier = data.aws_subnets.private.ids
 
   mixed_instances_policy {
 
