@@ -9,7 +9,7 @@ resource "aws_iam_instance_profile" "master_ip" {
 
 
 ##################################################################
-# IAM ROLE 
+# IAM ROLE
 ##################################################################
 
 resource "aws_iam_role" "master_iam_role" {
@@ -102,8 +102,8 @@ resource "aws_iam_role_policy" "master_secret_manager_inline_policy" {
           "Condition":{
             "ForAllValues:StringEquals":{
                 "aws:TagKeys": "jenkins:credentials:type"
-            }           
-          }            
+            }
+          }
       },
       {
           "Sid": "AllowListSecretValue",
@@ -111,7 +111,7 @@ resource "aws_iam_role_policy" "master_secret_manager_inline_policy" {
           "Action": "secretsmanager:ListSecrets",
           "Resource": [
             "*"
-          ]      
+          ]
       }
   ]
 }
@@ -193,7 +193,7 @@ resource "aws_autoscaling_group" "master_asg" {
 
   name = "${var.application}-master-asg"
 
-  vpc_zone_identifier = data.aws_subnet_ids.private.ids
+  vpc_zone_identifier = data.aws_subnets.private.ids
 
   target_group_arns = [aws_lb_target_group.master_tg.arn]
 
@@ -380,7 +380,7 @@ resource "aws_security_group" "master_storage_sg" {
 }
 
 resource "aws_efs_mount_target" "mount_targets" {
-  for_each        = toset(data.aws_subnet_ids.private.ids)
+  for_each        = toset(data.aws_subnets.private.ids)
   file_system_id  = aws_efs_file_system.master_efs.id
   subnet_id       = each.key
   security_groups = [aws_security_group.master_storage_sg.id]
@@ -427,7 +427,7 @@ resource "aws_lb" "lb" {
   idle_timeout               = 60
   internal                   = false
   security_groups            = [aws_security_group.lb_sg.id]
-  subnets                    = data.aws_subnet_ids.public.ids
+  subnets                    = data.aws_subnets.public.ids
   enable_deletion_protection = false
 
   tags                       = merge(var.tags, { "Name" = "${var.application}-lb" })
