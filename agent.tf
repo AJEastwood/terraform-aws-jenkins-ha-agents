@@ -150,12 +150,11 @@ resource "aws_iam_role_policy" "agent_inline_policy" {
       "Action": "ec2:TerminateInstances",
       "Effect": "Allow",
       "Resource":[
-        "arn:aws:ec2:${var.region}:${data.aws_caller_identity.current.account_id}:instance/*",
-        "arn:aws:ec2:${var.us_agent_region}:${data.aws_caller_identity.current.account_id}:instance/*"
+        "arn:aws:ec2:${var.region}:${data.aws_caller_identity.current.account_id}:instance/*"
       ],
       "Condition":{
         "StringEquals":{
-            "ec2:ResourceTag/Name":["${var.application}-agent", "${var.us_application}-agent"]
+            "ec2:ResourceTag/Name":["${var.application}-agent"]
         }
       }
     }
@@ -398,8 +397,8 @@ resource "aws_security_group" "agent_sg" {
 resource "aws_autoscaling_schedule" "agent_asg_scale_up" {
   scheduled_action_name  = "agent-asg-scale-up"
   min_size               = 1
-  max_size               = 6
-  desired_capacity       = 6
+  max_size               = 20
+  desired_capacity       = 20
   recurrence             = "0 7 * * 1-5" # Monday-Friday at 7am UTC
   time_zone              = "Europe/London"
   autoscaling_group_name = aws_autoscaling_group.agent_asg.name
