@@ -15,8 +15,3 @@ terraform {
 provider "aws" {
   region = var.region
 }
-
-provider "aws" {
-  alias  = "us"
-  region = var.us_agent_region
-}
