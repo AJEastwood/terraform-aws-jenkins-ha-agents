@@ -88,12 +88,12 @@ data "template_cloudinit_config" "master_init" {
     content      = var.extra_master_userdata
     merge_type   = var.extra_master_userdata_merge
   }
-
   part {
     content_type = "text/cloud-config"
     content      = data.template_file.master_end.rendered
     merge_type   = "list(append)+dict(recurse_array)+str()"
   }
+
 }
 
 data "template_file" "master_write_files" {
@@ -107,10 +107,12 @@ data "template_file" "master_write_files" {
     aws_region               = var.region
     executors_min            = var.agent_min * var.executors
     master_logs              = aws_cloudwatch_log_group.master_logs.name
-    #jenkins_username  = var.jenkins_username
+    jenkins_name             =  var.jenkins_name
+    dd_api_key               = var.dd_api_key
 
   }
 }
+
 
 data "template_file" "master_runcmd" {
   template = file("${path.module}/init/master-runcmd.cfg")
