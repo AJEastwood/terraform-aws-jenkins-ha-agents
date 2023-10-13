@@ -298,15 +298,6 @@ resource "aws_security_group" "master_sg" {
   }
 
   ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.us_vpc.cidr_block]
-    self        = false
-    description = "Allow traffic from US Agent"
-  }
-
-  ingress {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
@@ -325,14 +316,6 @@ resource "aws_security_group" "master_sg" {
     description     = "Allow Connection to Agent"
   }
 
-  ingress {
-    from_port   = 49817
-    to_port     = 49817
-    protocol    = "tcp"
-    cidr_blocks = [data.aws_vpc.us_vpc.cidr_block]
-    self        = false
-    description = "Allow Connection to US Agent"
-  }
   ingress {
     from_port   = 34981
     to_port     = 34981

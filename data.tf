@@ -60,50 +60,6 @@ data "template_file" "agent_end" {
 }
 
 ##################################################################
-# US Agent User Data
-##################################################################
-data "template_cloudinit_config" "usagent_init" {
-  gzip          = true
-  base64_encode = true
-
-  part {
-    filename     = "agent.cfg"
-    content_type = "text/cloud-config"
-    content      = data.template_file.usagent_write_files.rendered
-  }
-
-  part {
-    content_type = "text/cloud-config"
-    content      = data.template_file.agent_runcmd.rendered
-  }
-
-  part {
-    content_type = "text/cloud-config"
-    content      = var.extra_agent_userdata
-    merge_type   = var.extra_agent_userdata_merge
-  }
-
-  part {
-    content_type = "text/cloud-config"
-    content      = data.template_file.agent_end.rendered
-    merge_type   = "list(append)+dict(recurse_array)+str()"
-  }
-}
-
-data "template_file" "usagent_write_files" {
-  template = file("${path.module}/init/usagent-write-files.cfg")
-
-  vars = {
-    swarm_label      = "swarm-us" #All Labels you want Agent to have must be separated with space
-    agent_logs       = aws_cloudwatch_log_group.agent_logs.name
-    aws_region       = var.us_agent_region
-    executors        = var.executors
-    swarm_version    = var.swarm_version
-    jenkins_username = var.jenkins_username
-  }
-}
-
-##################################################################
 # Master User Data
 ##################################################################
 data "template_cloudinit_config" "master_init" {
@@ -241,16 +197,6 @@ data "aws_security_group" "bastion_sg" {
   }
 }
 
-data "aws_security_group" "us_bastion_sg" {
-  provider = aws.us
-  vpc_id   = data.aws_vpc.us_vpc.id
-
-  filter {
-    name   = "group-name"
-    values = [var.us_bastion_sg_name]
-  }
-}
-
 data "aws_caller_identity" "current" {}
 
 data "aws_subnets" "private" {
@@ -261,18 +207,6 @@ data "aws_subnets" "private" {
 
   tags = {
     Name = var.private_subnet_name
-  }
-}
-
-data "aws_subnets" "us_private" {
-  provider = aws.us
-  filter {
-    name   = "vpc-id"
-    values = [data.aws_vpc.us_vpc.id]
-  }
-
-  tags = {
-    Name = var.us_private_subnet_name
   }
 }
 
@@ -306,13 +240,6 @@ data "aws_vpc" "vpc" {
   }
 }
 
-data "aws_vpc" "us_vpc" {
-  provider = aws.us
-  tags = {
-    Name = var.us_vpc_name
-  }
-}
-
 data "aws_ami" "amzn2_ami" {
   most_recent = true
   owners      = [var.ami_owner]
@@ -320,16 +247,5 @@ data "aws_ami" "amzn2_ami" {
   filter {
     name   = "name"
     values = [var.ami_name]
-  }
-}
-
-data "aws_ami" "us_amzn2_ami" {
-  provider    = aws.us
-  most_recent = true
-  owners      = [var.ami_owner]
-
-  filter {
-    name   = "name"
-    values = [var.us_ami_name]
   }
 }
