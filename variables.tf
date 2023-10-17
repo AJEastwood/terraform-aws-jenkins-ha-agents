@@ -57,6 +57,16 @@ variable "application" {
   default     = "jenkins"
 }
 
+variable "jenkins_name" {
+  description = "The internal name of jenkins (e.g jenkins-headquarter, jenkins-testhq)"
+  type        = string
+}
+
+variable "dd_api_key" {
+  description = "API Key of Datadog"
+  type        = string
+}
+
 variable "auto_update_plugins_cron" {
   description = "Cron to set to auto update plugins. The default is set to February 31st, disabling this functionality. Overwrite this variable to have plugins auto update."
   type        = string
