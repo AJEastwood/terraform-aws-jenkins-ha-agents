@@ -52,6 +52,9 @@ resource "aws_iam_role_policy" "master_inline_policy" {
     {
       "Action": [
         "ec2:DescribeInstances",
+        "s3:GetObject",
+	"s3:GetObjectAcl",
+	"s3:PutObject",
         "autoscaling:DescribeAutoScalingGroups"
       ],
       "Effect": "Allow",
