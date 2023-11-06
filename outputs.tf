@@ -14,6 +14,11 @@ output "master_asg" {
   value       = aws_autoscaling_group.master_asg.name
 }
 
+output "master_asg_id" {
+  description = "The ID of the master asg."
+  value       = aws_security_group.master_sg.id
+}
+
 output "master_iam_role" {
   description = "The master IAM role name. Use for attaching additional iam policies."
   value       = aws_iam_role.master_iam_role.name

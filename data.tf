@@ -107,7 +107,7 @@ data "template_file" "master_write_files" {
     aws_region               = var.region
     executors_min            = var.agent_min * var.executors
     master_logs              = aws_cloudwatch_log_group.master_logs.name
-    jenkins_name             =  var.jenkins_name
+    jenkins_name             = var.jenkins_name
     dd_api_key               = var.dd_api_key
 
   }
