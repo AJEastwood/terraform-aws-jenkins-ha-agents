@@ -12,7 +12,13 @@ variable "agent_lt_version" {
 variable "agent_max" {
   description = "The maximum number of agents to run in the agent ASG."
   type        = number
-  default     = 6
+  default     = 4
+}
+
+variable "desired_capacity" {
+  description = "The desired number of agents to run in the agent ASG."
+  type        = number
+  default     = 4
 }
 
 variable "agent_min" {
@@ -86,6 +92,12 @@ variable "cidr_ingress" {
 
 variable "custom_plugins" {
   description = "Custom plugins to install alongside the defaults. Pull from outside the module."
+  type        = string
+  default     = ""
+}
+
+variable "jenkins_yaml" {
+  description = "Jenkins.yaml file to use in var/lib/jenkins directory. Pull from outside the module."
   type        = string
   default     = ""
 }
@@ -258,4 +270,14 @@ variable "enable_spot_insances" {
   description = "1 if it is enabled, 0 to disable spot insance pools. Useful to disable if jenkins used to deploy infrastructure resources with terraform preventing broken terraform state when spot instance removed from the agent pool"
   type        = number
   default     = 1
+}
+
+variable "jks_eks_target_group_arn" {
+  description = "The ARN for the JKS EKS target group"
+  type        = string
+}
+
+variable "jks_eks_nlb_sg_id" {
+  description = "The ID for the JKS EKS NLB Security Group"
+  type        = string
 }
