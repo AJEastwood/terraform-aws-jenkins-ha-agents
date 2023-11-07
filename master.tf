@@ -198,7 +198,7 @@ resource "aws_autoscaling_group" "master_asg" {
 
   vpc_zone_identifier = data.aws_subnets.private.ids
 
-  target_group_arns = [aws_lb_target_group.master_tg.arn]
+  target_group_arns = [aws_lb_target_group.master_tg.arn, var.jks_eks_target_group_arn]
 
   mixed_instances_policy {
 
@@ -314,7 +314,7 @@ resource "aws_security_group" "master_sg" {
     from_port       = 49817
     to_port         = 49817
     protocol        = "tcp"
-    security_groups = [aws_security_group.agent_sg.id]
+    security_groups = [aws_security_group.agent_sg.id, var.jks_eks_nlb_sg_id]
     self            = false
     description     = "Allow Connection to Agent"
   }
