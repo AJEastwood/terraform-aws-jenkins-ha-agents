@@ -122,7 +122,7 @@ data "template_file" "master_runcmd" {
     aws_region      = var.region
     jenkins_version = var.jenkins_version
     master_storage  = aws_efs_file_system.master_efs.id
-    #jenkins_username  = var.jenkins_username
+    env_name        = var.env_name
 
   }
 }

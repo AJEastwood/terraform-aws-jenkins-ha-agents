@@ -281,3 +281,8 @@ variable "jks_eks_nlb_sg_id" {
   description = "The ID for the JKS EKS NLB Security Group"
   type        = string
 }
+
+variable "env_name" {
+  description = "Environment Name e.g. testhq or headquarter"
+  type        = string
+}

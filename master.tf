@@ -309,7 +309,6 @@ resource "aws_security_group" "master_sg" {
     description     = "Allow SSH traffic Bastion security group"
   }
 
-
   ingress {
     from_port       = 49817
     to_port         = 49817
