@@ -29,7 +29,7 @@ resource "aws_autoscaling_group" "agent_db_asg" {
       }
 
       override {
-        instance_type = var.instance_type[0]
+        instance_type = var.instance_type[1]
       }
 
     }
@@ -77,7 +77,7 @@ resource "aws_launch_template" "agent_db_lt" {
   key_name      = var.key_name
   ebs_optimized = false
 
-  instance_type = var.instance_type[0]
+  instance_type = var.instance_type[1]
   user_data     = data.template_cloudinit_config.agent_db_init.rendered
 
   monitoring {
