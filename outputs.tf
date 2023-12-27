@@ -25,12 +25,12 @@ output "master_iam_role" {
 }
 
 output "lb_dns_name" {
-  value       = aws_lb.lb.dns_name
+  value       = aws_lb.private_lb.dns_name
   description = "The DNS name of the load balancer."
 }
 
 output "lb_zone_id" {
-  value       = aws_lb.lb.zone_id
+  value       = aws_lb.private_lb.zone_id
   description = "The canonical hosted zone ID of the load balancer."
 }
 
