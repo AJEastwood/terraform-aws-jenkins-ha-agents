@@ -234,6 +234,7 @@ data "aws_iam_policy" "ssm_policy" {
 
 data "aws_route53_zone" "r53_zone" {
   name = var.domain_name
+  private_zone = true
 }
 
 data "aws_vpc" "vpc" {

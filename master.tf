@@ -154,7 +154,7 @@ resource "aws_lb_target_group" "master_tg" {
 }
 
 resource "aws_lb_listener" "master_lb_listener" {
-  load_balancer_arn = aws_lb.lb.arn
+  load_balancer_arn = aws_lb.private_lb.arn
   port              = 443
   protocol          = "HTTPS"
   ssl_policy        = "ELBSecurityPolicy-TLS-1-2-2017-01"
@@ -167,7 +167,7 @@ resource "aws_lb_listener" "master_lb_listener" {
 }
 
 resource "aws_lb_listener" "master_http_listener" {
-  load_balancer_arn = aws_lb.lb.arn
+  load_balancer_arn = aws_lb.private_lb.arn
   port              = 80
   protocol          = "HTTP"
 
@@ -396,8 +396,8 @@ resource "aws_route53_record" "r53_record" {
   type    = "A"
 
   alias {
-    name                   = "dualstack.${aws_lb.lb.dns_name}"
-    zone_id                = aws_lb.lb.zone_id
+    name                   = "dualstack.${aws_lb.private_lb.dns_name}"
+    zone_id                = aws_lb.private_lb.zone_id
     evaluate_target_health = false
   }
 }
@@ -407,15 +407,15 @@ resource "aws_route53_record" "r53_record" {
 ##################################################################
 
 #tfsec:ignore:aws-elb-alb-not-public
-resource "aws_lb" "lb" {
+resource "aws_lb" "private_lb" {
   name                       = "${var.application}-lb"
   idle_timeout               = 60
-  internal                   = false
+  internal                   = true
   security_groups            = [aws_security_group.lb_sg.id]
-  subnets                    = data.aws_subnets.public.ids
+  subnets                    = data.aws_subnets.private.ids
   enable_deletion_protection = false
 
-  tags                       = merge(var.tags, { "Name" = "${var.application}-lb" })
+  tags                       = merge(var.tags, { "Name" = "${var.application}-private-lb" })
   drop_invalid_header_fields = true
 }
 
