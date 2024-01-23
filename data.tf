@@ -252,3 +252,7 @@ data "aws_ami" "amzn2_ami" {
     values = [var.ami_name]
   }
 }
+
+data "aws_kms_key" "ssm_key" {
+  key_id = var.ssm_kms_key
+}
