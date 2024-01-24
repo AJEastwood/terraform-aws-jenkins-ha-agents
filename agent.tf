@@ -229,6 +229,30 @@ resource "aws_iam_role_policy" "agent_helm_pull_allow_inline_policy" {
 EOF
 }
 
+
+resource "aws_iam_role_policy" "agent_kms_decrypt_allow_inline_policy" {
+  name = "decrypt-kms-key-for-ssm-sessions"
+  role = aws_iam_role.agent_iam_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "kmsKeyAccess",
+          "Effect": "Allow",
+          "Action": [
+              "kms:Decrypt"
+          ],
+          "Resource": [
+              "${data.aws_kms_key.ssm_key.arn}"
+          ]
+      }
+  ]
+}
+EOF
+}
+
 resource "aws_iam_role_policy_attachment" "agent_policy_attachment" {
   role       = aws_iam_role.agent_iam_role.name
   policy_arn = data.aws_iam_policy.ssm_policy.arn

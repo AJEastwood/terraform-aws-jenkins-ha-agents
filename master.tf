@@ -53,8 +53,8 @@ resource "aws_iam_role_policy" "master_inline_policy" {
       "Action": [
         "ec2:DescribeInstances",
         "s3:GetObject",
-	"s3:GetObjectAcl",
-	"s3:PutObject",
+        "s3:GetObjectAcl",
+        "s3:PutObject",
         "autoscaling:DescribeAutoScalingGroups"
       ],
       "Effect": "Allow",
@@ -114,6 +114,29 @@ resource "aws_iam_role_policy" "master_secret_manager_inline_policy" {
           "Action": "secretsmanager:ListSecrets",
           "Resource": [
             "*"
+          ]
+      }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "master_kms_decrypt_allow_inline_policy" {
+  name = "decrypt-kms-key-for-ssm-sessions"
+  role = aws_iam_role.master_iam_role.id
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+          "Sid": "kmsKeyAccess",
+          "Effect": "Allow",
+          "Action": [
+              "kms:Decrypt"
+          ],
+          "Resource": [
+              "${data.aws_kms_key.ssm_key.arn}"
           ]
       }
   ]

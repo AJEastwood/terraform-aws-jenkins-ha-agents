@@ -285,3 +285,8 @@ variable "env_name" {
   description = "Environment Name e.g. testhq or headquarter"
   type        = string
 }
+
+variable "ssm_kms_key" {
+  description = "The alias or arn of the KMS key that is designated for SSM session encryption"
+  type        = string
+}
