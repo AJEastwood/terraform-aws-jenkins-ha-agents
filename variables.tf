@@ -79,8 +79,8 @@ variable "auto_update_plugins_cron" {
   default     = "0 0 31 2 *"
 }
 
-variable "bastion_sg_name" {
-  description = "The bastion security group name to allow to ssh to the master/agents."
+variable "bastion_sg_id" {
+  description = "The bastion security group id to allow to ssh to the master/agents."
   type        = string
 }
 

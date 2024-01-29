@@ -190,14 +190,6 @@ data "template_file" "agent_db_write_files" {
 ##################################################################
 # Other Data
 ##################################################################
-data "aws_security_group" "bastion_sg" {
-  vpc_id = data.aws_vpc.vpc.id
-
-  filter {
-    name   = "group-name"
-    values = [var.bastion_sg_name]
-  }
-}
 
 data "aws_caller_identity" "current" {}
 
