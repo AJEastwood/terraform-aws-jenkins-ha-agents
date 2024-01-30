@@ -108,8 +108,6 @@ data "template_file" "master_write_files" {
     executors_min            = var.agent_min * var.executors
     master_logs              = aws_cloudwatch_log_group.master_logs.name
     jenkins_name             = var.jenkins_name
-    dd_api_key               = var.dd_api_key
-
   }
 }
 
@@ -190,14 +188,6 @@ data "template_file" "agent_db_write_files" {
 ##################################################################
 # Other Data
 ##################################################################
-data "aws_security_group" "bastion_sg" {
-  vpc_id = data.aws_vpc.vpc.id
-
-  filter {
-    name   = "group-name"
-    values = [var.bastion_sg_name]
-  }
-}
 
 data "aws_caller_identity" "current" {}
 

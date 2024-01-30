@@ -68,19 +68,14 @@ variable "jenkins_name" {
   type        = string
 }
 
-variable "dd_api_key" {
-  description = "API Key of Datadog"
-  type        = string
-}
-
 variable "auto_update_plugins_cron" {
   description = "Cron to set to auto update plugins. The default is set to February 31st, disabling this functionality. Overwrite this variable to have plugins auto update."
   type        = string
   default     = "0 0 31 2 *"
 }
 
-variable "bastion_sg_name" {
-  description = "The bastion security group name to allow to ssh to the master/agents."
+variable "bastion_sg_id" {
+  description = "The bastion security group id to allow to ssh to the master/agents."
   type        = string
 }
 

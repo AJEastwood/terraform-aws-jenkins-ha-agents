@@ -220,8 +220,10 @@ No modules.
 | [aws_iam_role.master_iam_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.agent_helm_pull_allow_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.agent_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.agent_kms_decrypt_allow_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.agent_secret_manager_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.master_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.master_kms_decrypt_allow_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.master_secret_manager_inline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.agent_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.master_policy_attachment](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
@@ -242,8 +244,8 @@ No modules.
 | [aws_ami.amzn2_ami](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ami) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_iam_policy.ssm_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy) | data source |
+| [aws_kms_key.ssm_key](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/kms_key) | data source |
 | [aws_route53_zone.r53_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) | data source |
-| [aws_security_group.bastion_sg](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/security_group) | data source |
 | [aws_subnets.private](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_subnets.public](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/subnets) | data source |
 | [aws_vpc.vpc](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/vpc) | data source |
@@ -274,10 +276,9 @@ No modules.
 | <a name="input_application"></a> [application](#input\_application) | The application name, to be interpolated into many resources and tags. Unique to this project. | `string` | `"jenkins"` | no |
 | <a name="input_auto_update_plugins_cron"></a> [auto\_update\_plugins\_cron](#input\_auto\_update\_plugins\_cron) | Cron to set to auto update plugins. The default is set to February 31st, disabling this functionality. Overwrite this variable to have plugins auto update. | `string` | `"0 0 31 2 *"` | no |
 | <a name="input_aws_master_region"></a> [aws\_master\_region](#input\_aws\_master\_region) | The AWS region Where the Master Node is belonged to. | `string` | `"eu-west-1"` | no |
-| <a name="input_bastion_sg_name"></a> [bastion\_sg\_name](#input\_bastion\_sg\_name) | The bastion security group name to allow to ssh to the master/agents. | `string` | n/a | yes |
+| <a name="input_bastion_sg_id"></a> [bastion\_sg\_id](#input\_bastion\_sg\_id) | The bastion security group id to allow to ssh to the master/agents. | `string` | n/a | yes |
 | <a name="input_cidr_ingress"></a> [cidr\_ingress](#input\_cidr\_ingress) | IP address cidr ranges allowed access to the LB. | `list(string)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
 | <a name="input_custom_plugins"></a> [custom\_plugins](#input\_custom\_plugins) | Custom plugins to install alongside the defaults. Pull from outside the module. | `string` | `""` | no |
-| <a name="input_dd_api_key"></a> [dd\_api\_key](#input\_dd\_api\_key) | API Key of Datadog | `string` | n/a | yes |
 | <a name="input_desired_capacity"></a> [desired\_capacity](#input\_desired\_capacity) | The desired number of agents to run in the agent ASG. | `number` | `4` | no |
 | <a name="input_domain_name"></a> [domain\_name](#input\_domain\_name) | The root domain name used to lookup the route53 zone information. | `string` | n/a | yes |
 | <a name="input_efs_mode"></a> [efs\_mode](#input\_efs\_mode) | The EFS throughput mode. Options are bursting and provisioned. To set the provisioned throughput in mibps, configure efs\_provisioned\_throughput variable. | `string` | `"bursting"` | no |
@@ -309,6 +310,7 @@ No modules.
 | <a name="input_scale_up_number"></a> [scale\_up\_number](#input\_scale\_up\_number) | Number of agents to create when scaling up. | `number` | `1` | no |
 | <a name="input_scale_up_number_db"></a> [scale\_up\_number\_db](#input\_scale\_up\_number\_db) | Number of database agents to create when scaling up. | `number` | `1` | no |
 | <a name="input_ssl_certificate"></a> [ssl\_certificate](#input\_ssl\_certificate) | The name of the SSL certificate to use on the load balancer. | `string` | n/a | yes |
+| <a name="input_ssm_kms_key"></a> [ssm\_kms\_key](#input\_ssm\_kms\_key) | The alias or arn of the KMS key that is designated for SSM session encryption | `string` | n/a | yes |
 | <a name="input_ssm_parameter"></a> [ssm\_parameter](#input\_ssm\_parameter) | The full ssm parameter path that will house the api key and master admin password. Also used to grant IAM access to this resource. | `string` | n/a | yes |
 | <a name="input_swarm_version"></a> [swarm\_version](#input\_swarm\_version) | The version of swarm plugin to install on the agents. Update by updating this value. | `string` | `"3.39"` | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | tags to define locally, and interpolate into the tags in this module. | `map(string)` | n/a | yes |

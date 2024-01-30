@@ -397,7 +397,7 @@ resource "aws_security_group" "agent_sg" {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = [data.aws_security_group.bastion_sg.id]
+    security_groups = [var.bastion_sg_id]
     self            = false
     description     = "SSH-22-TCP"
   }
