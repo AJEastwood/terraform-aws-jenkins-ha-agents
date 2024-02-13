@@ -223,7 +223,7 @@ data "aws_iam_policy" "ssm_policy" {
 }
 
 data "aws_route53_zone" "r53_zone" {
-  name = var.domain_name
+  name         = var.domain_name
   private_zone = true
 }
 
@@ -245,4 +245,50 @@ data "aws_ami" "amzn2_ami" {
 
 data "aws_kms_key" "ssm_key" {
   key_id = var.ssm_kms_key
+}
+
+
+##################################################################
+# QA Agent User Data
+##################################################################
+
+data "template_cloudinit_config" "agent_qa_init" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "agent.cfg"
+    content_type = "text/cloud-config"
+    content      = data.template_file.agent_qa_write_files.rendered
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = data.template_file.agent_runcmd.rendered
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = var.extra_agent_userdata
+    merge_type   = var.extra_agent_userdata_merge
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = data.template_file.agent_end.rendered
+    merge_type   = "list(append)+dict(recurse_array)+str()"
+  }
+}
+
+data "template_file" "agent_qa_write_files" {
+  template = file("${path.module}/init/agent-write-files.cfg")
+
+  vars = {
+    swarm_label      = "swarm-qa"
+    agent_logs       = aws_cloudwatch_log_group.agent_logs.name
+    aws_region       = var.region
+    executors        = var.executors
+    swarm_version    = var.swarm_version
+    jenkins_username = var.jenkins_username
+  }
 }

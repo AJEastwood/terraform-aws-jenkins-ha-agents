@@ -420,9 +420,9 @@ resource "aws_security_group" "agent_sg" {
 # Create a scheduled scaling policy to scale up the ASG during office hours
 resource "aws_autoscaling_schedule" "agent_asg_scale_up" {
   scheduled_action_name  = "agent-asg-scale-up"
-  min_size               = 1
+  min_size               = var.agent_min
   max_size               = var.agent_max
-  desired_capacity       = var.desired_capacity
+  desired_capacity       = var.agent_max
   recurrence             = "0 7 * * 1-5" # Monday-Friday at 7am UTC
   time_zone              = "Europe/London"
   autoscaling_group_name = aws_autoscaling_group.agent_asg.name
@@ -431,7 +431,7 @@ resource "aws_autoscaling_schedule" "agent_asg_scale_up" {
 # Create a scheduled scaling policy to scale down the ASG during out-of-office hours
 resource "aws_autoscaling_schedule" "agent_asg_scale_down" {
   scheduled_action_name  = "agent-asg-scale-down"
-  min_size               = 1
+  min_size               = var.agent_min
   max_size               = 2
   desired_capacity       = 2
   recurrence             = "0 23 * * *" # every day at 11pm UTC
