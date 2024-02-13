@@ -32,6 +32,7 @@ module "jenkins_ha_agents" {
   agent_min            = var.agent_min
   agent_volume_size    = var.agent_volume_size
   agent_db_volume_size = var.agent_db_volume_size
+  agent_qa_volume_size = var.agent_qa_volume_size
 
   efs_mode                   = var.efs_mode
   efs_provisioned_throughput = var.efs_provisioned_throughput

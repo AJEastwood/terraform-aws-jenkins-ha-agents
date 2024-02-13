@@ -2,15 +2,15 @@
 # AutoScaling Group
 ##################################################################
 
-resource "aws_autoscaling_group" "agent_db_asg" {
+resource "aws_autoscaling_group" "agent_qa_asg" {
 
-  max_size = var.agent_db_max
+  max_size = var.agent_qa_max
   min_size = var.agent_min
 
   health_check_grace_period = 300
   health_check_type         = "EC2"
 
-  name = "${var.application}-db-agent-asg"
+  name = "${var.application}-qa-agent-asg"
 
   vpc_zone_identifier = data.aws_subnets.private.ids
 
@@ -24,19 +24,19 @@ resource "aws_autoscaling_group" "agent_db_asg" {
 
     launch_template {
       launch_template_specification {
-        launch_template_id = aws_launch_template.agent_db_lt.id
+        launch_template_id = aws_launch_template.agent_qa_lt.id
         version            = var.agent_lt_version
       }
 
       override {
-        instance_type = var.instance_type[1]
+        instance_type = var.instance_type[2]
       }
 
     }
   }
 
   dynamic "tag" {
-    for_each = local.tags.agent_db
+    for_each = local.tags.agent_qa
     content {
       key                 = tag.key
       value               = tag.value
@@ -49,8 +49,8 @@ resource "aws_autoscaling_group" "agent_db_asg" {
 # Launch Template
 ##################################################################
 
-resource "aws_launch_template" "agent_db_lt" {
-  name        = "${var.application}-agent-db-lt"
+resource "aws_launch_template" "agent_qa_lt" {
+  name        = "${var.application}-agent-qa-lt"
   description = "${var.application} database agent launch template"
 
   iam_instance_profile {
@@ -66,7 +66,7 @@ resource "aws_launch_template" "agent_db_lt" {
     no_device   = true
 
     ebs {
-      volume_size           = var.agent_db_volume_size
+      volume_size           = var.agent_qa_volume_size
       encrypted             = true
       delete_on_termination = true
       volume_type           = "gp3"
@@ -77,8 +77,8 @@ resource "aws_launch_template" "agent_db_lt" {
   key_name      = var.key_name
   ebs_optimized = false
 
-  instance_type = var.instance_type[1]
-  user_data     = data.template_cloudinit_config.agent_db_init.rendered
+  instance_type = var.instance_type[2]
+  user_data     = data.template_cloudinit_config.agent_qa_init.rendered
 
   monitoring {
     enabled = true
@@ -88,18 +88,18 @@ resource "aws_launch_template" "agent_db_lt" {
 
   tag_specifications {
     resource_type = "instance"
-    tags          = local.tags.agent_db
+    tags          = local.tags.agent_qa
   }
 
   tag_specifications {
     resource_type = "volume"
-    tags          = local.tags.agent_db
+    tags          = local.tags.agent_qa
   }
 
   metadata_options {
     http_tokens = "required"
   }
-  tags = merge(var.tags, { "Name" = "${var.application}-agent-db-lt" })
+  tags = merge(var.tags, { "Name" = "${var.application}-agent-qa-lt" })
 }
 
 ##################################################################
@@ -107,20 +107,20 @@ resource "aws_launch_template" "agent_db_lt" {
 ##################################################################
 
 
-resource "aws_autoscaling_policy" "agent_db_scale_up_policy" {
-  name                   = "${var.application}-agent-db-up-policy"
-  scaling_adjustment     = var.scale_up_number_db
+resource "aws_autoscaling_policy" "agent_qa_scale_up_policy" {
+  name                   = "${var.application}-agent-qa-up-policy"
+  scaling_adjustment     = var.scale_up_number_qa
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 150
-  autoscaling_group_name = aws_autoscaling_group.agent_db_asg.name
+  autoscaling_group_name = aws_autoscaling_group.agent_qa_asg.name
 }
 
-resource "aws_autoscaling_policy" "agent_db_scale_down_policy" {
-  name                   = "${var.application}-agent-db-down-policy"
-  scaling_adjustment     = var.scale_down_number_db
+resource "aws_autoscaling_policy" "agent_qa_scale_down_policy" {
+  name                   = "${var.application}-agent-qa-down-policy"
+  scaling_adjustment     = var.scale_down_number_qa
   adjustment_type        = "ChangeInCapacity"
   cooldown               = 180
-  autoscaling_group_name = aws_autoscaling_group.agent_db_asg.name
+  autoscaling_group_name = aws_autoscaling_group.agent_qa_asg.name
 }
 
 ##################################################################
@@ -128,23 +128,23 @@ resource "aws_autoscaling_policy" "agent_db_scale_down_policy" {
 ##################################################################
 
 # Create a scheduled scaling policy to scale up the ASG during office hours
-resource "aws_autoscaling_schedule" "agent_db_asg_scale_up" {
-  scheduled_action_name  = "agent-db-asg-scale-up"
+resource "aws_autoscaling_schedule" "agent_qa_asg_scale_up" {
+  scheduled_action_name  = "agent-qa-asg-scale-up"
   min_size               = var.agent_min
-  max_size               = var.agent_db_max
-  desired_capacity       = var.agent_db_max
+  max_size               = var.agent_qa_max
+  desired_capacity       = var.agent_qa_max
   recurrence             = "0 7 * * 1-5" # Monday-Friday at 7am UTC
   time_zone              = "Europe/London"
-  autoscaling_group_name = aws_autoscaling_group.agent_db_asg.name
+  autoscaling_group_name = aws_autoscaling_group.agent_qa_asg.name
 }
 
 # Create a scheduled scaling policy to scale down the ASG during out-of-office hours
-resource "aws_autoscaling_schedule" "agent_db_asg_scale_down" {
-  scheduled_action_name  = "agent-db-asg-scale-down"
+resource "aws_autoscaling_schedule" "agent_qa_asg_scale_down" {
+  scheduled_action_name  = "agent-qa-asg-scale-down"
   min_size               = var.agent_min
   max_size               = var.agent_min
   desired_capacity       = var.agent_min
   recurrence             = "0 23 * * *" # every day at 11pm UTC
   time_zone              = "Europe/London"
-  autoscaling_group_name = aws_autoscaling_group.agent_db_asg.name
+  autoscaling_group_name = aws_autoscaling_group.agent_qa_asg.name
 }

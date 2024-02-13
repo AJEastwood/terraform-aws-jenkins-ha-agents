@@ -33,6 +33,12 @@ variable "agent_db_volume_size" {
   default     = 16
 }
 
+variable "agent_qa_volume_size" {
+  description = "The size of the QA agent volume."
+  type        = number
+  default     = 16
+}
+
 variable "ami_name" {
   description = "The name of the amzn2 ami. Used for searching for AMI id."
   type        = string
@@ -183,8 +189,20 @@ variable "scale_down_number_db" {
   default     = -1
 }
 
+variable "scale_down_number_qa" {
+  description = "Number of QA agents to destroy when scaling down."
+  type        = number
+  default     = -1
+}
+
 variable "scale_up_number_db" {
   description = "Number of database agents to create when scaling up."
+  type        = number
+  default     = 1
+}
+
+variable "scale_up_number_qa" {
+  description = "Number of QA agents to create when scaling up."
   type        = number
   default     = 1
 }
