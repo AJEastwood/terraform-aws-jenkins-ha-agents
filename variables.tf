@@ -12,7 +12,16 @@ variable "agent_lt_version" {
 variable "agent_max" {
   description = "The maximum number of agents to run in the agent ASG."
   type        = number
-  default     = 4
+}
+
+variable "agent_db_max" {
+  description = "The maximum number of database agents to run in the agent ASG."
+  type        = number
+}
+
+variable "agent_qa_max" {
+  description = "The maximum number of qa agents to run in the agent ASG."
+  type        = number
 }
 
 variable "desired_capacity" {
@@ -35,6 +44,12 @@ variable "agent_volume_size" {
 
 variable "agent_db_volume_size" {
   description = "The size of the database agent volume."
+  type        = number
+  default     = 16
+}
+
+variable "agent_qa_volume_size" {
+  description = "The size of the QA agent volume."
   type        = number
   default     = 16
 }
@@ -223,8 +238,20 @@ variable "scale_down_number_db" {
   default     = -1
 }
 
+variable "scale_down_number_qa" {
+  description = "Number of QA agents to destroy when scaling down."
+  type        = number
+  default     = -1
+}
+
 variable "scale_up_number_db" {
   description = "Number of database agents to create when scaling up."
+  type        = number
+  default     = 1
+}
+
+variable "scale_up_number_qa" {
+  description = "Number of QA agents to create when scaling up."
   type        = number
   default     = 1
 }
