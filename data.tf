@@ -60,6 +60,65 @@ data "template_file" "agent_end" {
 }
 
 ##################################################################
+# QA Agent User Data
+##################################################################
+data "template_cloudinit_config" "qa_agent_init" {
+  gzip          = true
+  base64_encode = true
+
+  part {
+    filename     = "qa_agent.cfg"
+    content_type = "text/cloud-config"
+    content      = data.template_file.qa_agent_write_files.rendered
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = data.template_file.qa_agent_runcmd.rendered
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = var.extra_qa_agent_userdata
+    merge_type   = var.extra_qa_agent_userdata_merge
+  }
+
+  part {
+    content_type = "text/cloud-config"
+    content      = data.template_file.qa_agent_end.rendered
+    merge_type   = "list(append)+dict(recurse_array)+str()"
+  }
+}
+
+data "template_file" "qa_agent_write_files" {
+  template = file("${path.module}/init/qa-agent-write-files.cfg")
+
+  vars = {
+    swarm_label      = "swarm-eu" #All Labels you want Agent to have must be separated with space
+    agent_logs       = aws_cloudwatch_log_group.agent_logs.name
+    aws_region       = var.region
+    executors        = var.executors
+    swarm_version    = var.swarm_version
+    jenkins_username = var.jenkins_username
+  }
+}
+
+
+data "template_file" "qa_agent_runcmd" {
+  template = file("${path.module}/init/qa-agent-runcmd.cfg")
+
+  vars = {
+    api_ssm_parameter = "${var.ssm_parameter}${var.api_ssm_parameter}"
+    aws_master_region = var.aws_master_region
+    master_asg        = aws_autoscaling_group.master_asg.name
+    swarm_version     = var.swarm_version
+  }
+}
+
+data "template_file" "qa_agent_end" {
+  template = file("${path.module}/init/qa-agent-end.cfg")
+}
+##################################################################
 # Master User Data
 ##################################################################
 data "template_cloudinit_config" "master_init" {

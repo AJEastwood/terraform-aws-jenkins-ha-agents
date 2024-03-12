@@ -236,7 +236,7 @@ resource "aws_autoscaling_group" "master_asg" {
       }
 
       override {
-        instance_type = var.instance_type[0]
+        instance_type = var.master_instance_type
       }
 
     }
@@ -284,7 +284,7 @@ resource "aws_launch_template" "master_lt" {
   key_name      = var.key_name
   ebs_optimized = false
 
-  instance_type = var.instance_type[0]
+  instance_type = var.master_instance_type
   user_data     = data.template_cloudinit_config.master_init.rendered
 
   monitoring {

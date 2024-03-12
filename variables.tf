@@ -1,3 +1,4 @@
+code .
 variable "admin_password" {
   description = "The master admin password. Used to bootstrap and login to the master. Also pushed to ssm parameter store for posterity."
   type        = string
@@ -158,11 +159,21 @@ variable "extra_master_userdata_merge" {
   type        = string
   default     = "list(append)+dict(recurse_array)+str()"
 }
-
-variable "instance_type" {
-  description = "The type of instances to use for both ASG's. The first value in the list will be set as the master instance."
-  type        = list(string)
+variable "master_instance_type" {
+  description = "The type of instances to use for the master instance."
+  type        = string
+  default     = "m5.16xlarge"
 }
+variable "agent_instance_type" {
+ description = "The type of instances to use for the agent instance."
+ type        = string
+ default     = "t3.medium"
+ }
+variable "qa_agent_instance_type" {
+ description = "The type of instances to use for the QA agent instance."
+ type        = string
+ default     = "t3.large"
+ }
 
 variable "jenkins_version" {
   description = "The version number of Jenkins to use on the master. Change this value when a new version comes out, and it will update the launch configuration and the autoscaling group."
